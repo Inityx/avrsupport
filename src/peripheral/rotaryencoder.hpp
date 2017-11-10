@@ -1,7 +1,7 @@
 #ifndef ROTARYENCODER_H
 #define ROTARYENCODER_H
 
-namespace AVRSupport::PortLib {
+namespace AVRSupport::Peripheral {
     struct RotaryEncoder {
         enum struct Active : uint8_t { A, B, BOTH, NONE };
         using Reader = bool (*)();
