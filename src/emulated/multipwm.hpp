@@ -7,7 +7,7 @@
 #include "../portlib/portlib.hpp"
 #include "../portlib/digitalport.hpp"
 
-namespace AVRSupport::Util {
+namespace AVRSupport::Emulated {
     using PortLib::DigitalPort;
     using PortLib::PinIndex;
 

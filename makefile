@@ -1,15 +1,19 @@
 # Build definitions
-CXX=avr-g++
+CXX=g++
 CFLAGS=-Os -Wpedantic --std=c++17
 
-# Targets
-.PHONY: all includesclean configure
+GREEN=\u001b[32m
+RESET=\u001b[0m
 
-all: includes
+# Structure
+MODULES=portlib peripheral emulated
+
+# Targets
+.PHONY: all includes test test_clean clean configure
+
+all: includes test
 
 # Includes
-MODULES=portlib peripheral util
-
 define generate_include
 INCLUDE_DIRS+=include/$(1)
 INCLUDES+=$$(addprefix include/$(1)/, $$(notdir $$(wildcard src/$(1)/*)))
@@ -24,14 +28,29 @@ include/$(1):
 
 endef
 
-$(foreach MODULE,$(MODULES), $(eval $(call generate_include,$(MODULE))))
+$(foreach MODULE, $(MODULES), $(eval $(call generate_include,$(MODULE))))
 
 includes: $(INCLUDES)
 
+# Test
+TEST_SRC=$(notdir $(wildcard test/*.cpp))
+TEST_BUILD=$(addprefix test/build/, $(patsubst %.cpp, %.out, $(TEST_SRC)))
+
+test: $(TEST_BUILD) test_clean
+
+test/build/%.out: test/%.cpp
+	@printf " Testing $(notdir $(basename $@))..."
+	@$(CXX) $< -o $@ $(CFLAGS) -iquote include/
+	@$@
+	@echo -e " $(GREEN)Success$(RESET)."
+
+test_clean:
+	@echo " Cleaning up tests"
+	@rm -f $(TEST_BUILD)
+
+# Clean
 clean:
 	rm -rf $(INCLUDE_DIRS)
-
-# Build
 
 # Configure
 configure: .nvimrc
