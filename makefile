@@ -11,7 +11,7 @@ MODULES=portlib peripheral emulated
 # Targets
 .PHONY: all includes test test_clean clean configure
 
-all: includes test
+all: includes
 
 # Includes
 define generate_include
@@ -36,7 +36,7 @@ includes: $(INCLUDES)
 TEST_SRC=$(notdir $(wildcard test/*.cpp))
 TEST_BUILD=$(addprefix test/build/, $(patsubst %.cpp, %.out, $(TEST_SRC)))
 
-test: $(TEST_BUILD) test_clean
+test: includes $(TEST_BUILD) test_clean
 
 test/build/%.out: test/%.cpp
 	@printf " Testing $(notdir $(basename $@))..."
@@ -50,7 +50,8 @@ test_clean:
 
 # Clean
 clean:
-	rm -rf $(INCLUDE_DIRS)
+	@echo " RM $(INCLUDE_DIRS)"
+	@rm -rf $(INCLUDE_DIRS)
 
 # Configure
 configure: .nvimrc
