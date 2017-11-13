@@ -4,15 +4,18 @@
 #include <stdint.h>
 #include <avr/io.h>
 
-#include "portlib/digitalport.hpp"
+#include "../portlib/digitalport.hpp"
+#include "../portlib/timer.hpp"
 
 namespace AVRSupport {
     using PortLib::DigitalPort;
-    using Timer0 = PortLib::Timer<uint8_t>;
-    using Timer1 = PortLib::Timer<uint16_t>;
+    using PortLib::Timer;
 
-    DigitalPort port_a{ porta, pina, ddra };
-    DigitalPort port_b{ portb, pinb, ddrb };
+    using Timer0 = Timer<uint8_t>;
+    using Timer1 = Timer<uint16_t>;
+
+    DigitalPort port_a{ PORTA, PINA, DDRA };
+    DigitalPort port_b{ PORTB, PINB, DDRB };
 
     Timer0 timer_0 {
         TCNT0,

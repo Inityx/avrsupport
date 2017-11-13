@@ -1,12 +1,14 @@
 # Build definitions
 CXX=g++
-CFLAGS=-Os -Wpedantic --std=c++17
+CFLAGS=-Wpedantic --std=c++17
+CFLAGS_RELEASE=-Os
+CFLAGS_TEST=-O0
 
 GREEN=\u001b[32m
 RESET=\u001b[0m
 
 # Structure
-MODULES=portlib peripheral emulated ./
+MODULES=portlib peripheral emulated chips
 
 # Targets
 .PHONY: all includes test test_clean clean configure
@@ -19,7 +21,7 @@ INCLUDE_DIRS+=include/$(1)
 INCLUDES+=$$(addprefix include/$(1)/, $$(notdir $$(wildcard src/$(1)/*)))
 
 include/$(1)/%.hpp: src/$(1)/%.hpp | include/$(1)
-	@echo " CP $$(notdir $$(basename $$@))"
+	@echo " CP $(1)/$$(notdir $$(basename $$@))"
 	@cp $$< $$@
 
 include/$(1):
@@ -40,7 +42,7 @@ test: includes $(TEST_BUILD) test_clean
 
 test/build/%.out: test/%.cpp
 	@printf " Testing $(notdir $(basename $@))..."
-	@$(CXX) $< -o $@ $(CFLAGS) -iquote include/
+	@$(CXX) $< -o $@ $(CFLAGS) $(CFLAGS_TEST) -iquote include/
 	@$@
 	@echo -e " $(GREEN)Success$(RESET)."
 
