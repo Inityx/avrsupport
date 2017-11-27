@@ -7,4 +7,6 @@
 
 #include "emulated/multipwm.hpp"
 
+#include "utility/array.hpp"
+
 int main() {}

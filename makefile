@@ -8,7 +8,7 @@ GREEN=\u001b[32m
 RESET=\u001b[0m
 
 # Structure
-MODULES=portlib peripheral emulated chips
+MODULES=portlib peripheral emulated chips utility
 
 # Targets
 .PHONY: all includes test test_clean clean configure
