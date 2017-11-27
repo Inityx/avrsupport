@@ -7,15 +7,18 @@
 #include "../portlib/portlib.hpp"
 #include "../portlib/digitalport.hpp"
 
+#include "../utility/array.hpp"
+
 namespace AVRSupport::Emulated {
     using PortLib::DigitalPort;
     using PortLib::PinIndex;
+    using Utility::Array;
 
     template<PinIndex COUNT, uint8_t STEP>
     struct MultiPWM {
     private:
-        uint8_t levels[COUNT];
-        PinIndex pins[COUNT];
+        Array<PinIndex, COUNT> pins;
+        Array<uint8_t, COUNT> levels;
         DigitalPort &port;
         uint8_t counter;
         
@@ -24,18 +27,17 @@ namespace AVRSupport::Emulated {
         PinIndex selection;
         
         constexpr MultiPWM(
-            PinIndex const *pins_source,
-            uint8_t const *levels_source,
+            Array<PinIndex, COUNT> const pins,
+            Array<uint8_t, COUNT> const levels,
             DigitalPort &port
-        ) : counter(0), port(port), active(true), selection(0) {
-            // This loop is because you can't pass a C array
-            // as an argument in C++ and std::array does not
-            // exist on AVR. It's still constexpr though.
-            for(PinIndex i{0}; i<COUNT; i++) {
-                levels[i] = levels_source[i];
-                pins[i] = pins_source[i];
-            }
-        }
+        ) :
+            pins(pins),
+            levels(levels),
+            port(port),
+            counter(0),
+            active(true),
+            selection(0)
+        {}
 
         inline void set_level(PinIndex index, uint8_t value) {
             levels[index] = value;
