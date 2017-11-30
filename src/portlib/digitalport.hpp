@@ -20,20 +20,20 @@ namespace AVRSupport::PortLib {
         {}
 
         // Accessors
-        inline uint8_t get() const { return pinx; }
-        inline bool get(PinIndex const index) { return pinx & (1<<index); }
+        uint8_t get() const { return pinx; }
+        bool get(PinIndex const index) { return pinx & (1<<index); }
 
-        inline void set(uint8_t rhs) { portx = rhs; }
-        inline void set_out()        { ddrx = 0xFF; }
-        inline void set_in()         { ddrx = 0x00; }
+        void set(uint8_t rhs) { portx = rhs; }
+        void set_out()        { ddrx = 0xFF; }
+        void set_in()         { ddrx = 0x00; }
 
-        inline void set_out (PinIndex const index) { ddrx  |=  (1<<index); }
-        inline void set_in  (PinIndex const index) { ddrx  &= ~(1<<index); }
-        inline void set_high(PinIndex const index) { portx |=  (1<<index); }
-        inline void set_low (PinIndex const index) { portx &= ~(1<<index); }
-        inline void toggle  (PinIndex const index) { portx ^=  (1<<index); }
+        void set_out (PinIndex const index) { ddrx  |=  (1<<index); }
+        void set_in  (PinIndex const index) { ddrx  &= ~(1<<index); }
+        void set_high(PinIndex const index) { portx |=  (1<<index); }
+        void set_low (PinIndex const index) { portx &= ~(1<<index); }
+        void toggle  (PinIndex const index) { portx ^=  (1<<index); }
 
-        inline void set(PinIndex const index, bool rhs) {
+        void set(PinIndex const index, bool rhs) {
             if (rhs) set_high(index);
             else     set_low (index);
         }

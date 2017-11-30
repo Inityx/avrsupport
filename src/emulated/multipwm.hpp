@@ -39,11 +39,11 @@ namespace AVRSupport::Emulated {
             selection(0)
         {}
 
-        inline void set_level(PinIndex index, uint8_t value) {
+        void set_level(PinIndex index, uint8_t value) {
             levels[index] = value;
         }
         
-        inline void isolate_selected() {
+        void isolate_selected() {
             for(uint8_t i{0}; i<COUNT; i++)
                 if (i != selection)
                     port.set_low(pins[i]);
@@ -51,7 +51,7 @@ namespace AVRSupport::Emulated {
             port.set_high(pins[selection]);
         }
 
-        inline void step() {
+        void step() {
             if (!active) return;
 
             if(counter > 0) {
@@ -69,7 +69,7 @@ namespace AVRSupport::Emulated {
             counter++;
         }
 
-        inline void select_next() {
+        void select_next() {
             if (selection >= COUNT-1) {
                 selection = 0;
                 return;
@@ -78,8 +78,8 @@ namespace AVRSupport::Emulated {
             selection++;
         }
 
-        inline void adjust_up()   { levels[selection] += STEP; }
-        inline void adjust_down() { levels[selection] -= STEP; }
+        void adjust_up()   { levels[selection] += STEP; }
+        void adjust_down() { levels[selection] -= STEP; }
     };
 }
 

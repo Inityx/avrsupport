@@ -21,15 +21,15 @@ namespace AVRSupport::PortLib {
         {}
 
         // Accessors
-        inline bool get() const { return (port.pinx & bitmask) != 0; }
+        bool get() const { return (port.pinx & bitmask) != 0; }
 
-        inline void set_out()  { port.ddrx  |=  bitmask; }
-        inline void set_in()   { port.ddrx  &= ~bitmask; }
-        inline void set_high() { port.portx |=  bitmask; }
-        inline void set_low()  { port.portx &= ~bitmask; }
-        inline void toggle()   { port.portx ^=  bitmask; }
+        void set_out()  { port.ddrx  |=  bitmask; }
+        void set_in()   { port.ddrx  &= ~bitmask; }
+        void set_high() { port.portx |=  bitmask; }
+        void set_low()  { port.portx &= ~bitmask; }
+        void toggle()   { port.portx ^=  bitmask; }
 
-        inline void set(bool rhs) {
+        void set(bool rhs) {
             if (rhs) set_high();
             else     set_low ();
         }

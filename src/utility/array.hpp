@@ -32,7 +32,7 @@ namespace AVRSupport::Utility {
 
     // Comparisons
     template<typename Type, uint8_t Size>
-    inline bool operator==(
+    bool operator==(
         Array<Type, Size> const & l,
         Array<Type, Size> const & r
     ) {
@@ -51,7 +51,7 @@ namespace AVRSupport::Utility {
     }
 
     template<typename Type, uint8_t Size>
-    inline bool operator!=(
+    bool operator!=(
         Array<Type, Size> const & l,
         Array<Type, Size> const & r
     ) {
