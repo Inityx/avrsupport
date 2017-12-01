@@ -27,8 +27,8 @@ namespace AVRSupport::Emulated {
         PinIndex selection;
         
         constexpr MultiPWM(
-            Array<PinIndex, COUNT> const pins,
-            Array<uint8_t, COUNT> const levels,
+            Array<PinIndex, COUNT> const &pins,
+            Array<uint8_t, COUNT> const &levels,
             DigitalPort &port
         ) :
             pins(pins),
@@ -70,12 +70,8 @@ namespace AVRSupport::Emulated {
         }
 
         void select_next() {
-            if (selection >= COUNT-1) {
-                selection = 0;
-                return;
-            }
-
-            selection++;
+            if (selection < COUNT-1) selection++;
+            else selection = 0;
         }
 
         void adjust_up()   { levels[selection] += STEP; }

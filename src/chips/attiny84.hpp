@@ -14,8 +14,8 @@ namespace AVRSupport {
     using Timer0 = Timer<uint8_t>;
     using Timer1 = Timer<uint16_t>;
 
-    DigitalPort port_a{ PORTA, PINA, DDRA };
-    DigitalPort port_b{ PORTB, PINB, DDRB };
+    DigitalPort port_a{ PINA, PORTA, DDRA };
+    DigitalPort port_b{ PINB, PORTB, DDRB };
 
     Timer0 timer_0 {
         TCNT0,
