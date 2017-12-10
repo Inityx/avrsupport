@@ -1,2 +1,17 @@
 language: cpp
-script: make test
+script: make test CXX=$BUILD_CXX
+
+matrix:
+  include:
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-7
+      env:
+        - MATRIX_EVAL="BUILD_CXX=g++-7"
+
+before_install:
+  - eval "${MATRIX_EVAL}"
