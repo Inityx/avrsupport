@@ -43,6 +43,17 @@ bool right_turn() {
     );
 }
 
+bool clear() {
+    Rotary rotary;
+
+    rotary.update(1,0);
+    bool updated = rotary.stream == 0b00'00'00'10;
+    rotary.clear();
+    bool cleared = rotary.stream == 0;
+
+    return updated && cleared;
+}
+
 bool deduplicate() {
     Rotary rotary;
     times_do(10, [&](){ rotary.update(0,0); });
