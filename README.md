@@ -1,5 +1,6 @@
-# AVRSupport
+[![Build Status](https://travis-ci.org/Inityx/avrsupport.png)](https://travis-ci.org/Inityx/avrsupport)
 
+# AVRSupport
 This is a C++17 library for AVR Microcontrollers, designed to provide fast and clean implementations of common objects.
 
 ## Including in your project
