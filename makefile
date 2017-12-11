@@ -4,8 +4,10 @@ CFLAGS=-Wpedantic --std=c++17
 CFLAGS_RELEASE=-Os
 CFLAGS_TEST=-O0
 
-GREEN=\u001b[32m
-RESET=\u001b[0m
+ifneq ($(CI), true)
+    GREEN=\u001b[32m
+    RESET=\u001b[0m
+endif
 
 # Structure
 MODULES=portlib peripheral emulated chips utility
@@ -41,10 +43,10 @@ TEST_BUILD=$(addprefix test/build/, $(patsubst %.cpp, %.out, $(TEST_SRC)))
 test: includes $(TEST_BUILD) test_clean
 
 test/build/%.out: test/%.cpp
-	@printf " Testing $(notdir $(basename $@))..."
+	@printf " Testing $(notdir $(basename $@))... "
 	@$(CXX) $< -o $@ $(CFLAGS) $(CFLAGS_TEST) -iquote include/
 	@$@
-	@echo -e " $(GREEN)Success$(RESET)."
+	@echo -e "$(GREEN)Success$(RESET)."
 
 test_clean:
 	@echo " Cleaning up tests"
