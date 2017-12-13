@@ -17,8 +17,8 @@ namespace AvrSupport::PortLib {
             DigitalPort &port,
             PinIndex const index
         ) :
-            port(port),
-            bitmask(1<<index)
+            port{port},
+            bitmask{1<<index}
         {}
 
         // Accessors

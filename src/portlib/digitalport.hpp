@@ -14,9 +14,9 @@ namespace AvrSupport::PortLib {
             Register8 portx,
             Register8 ddrx
         ) :
-            pinx(pinx),
-            portx(portx),
-            ddrx(ddrx)
+            pinx{pinx},
+            portx{portx},
+            ddrx{ddrx}
         {}
 
         // Accessors

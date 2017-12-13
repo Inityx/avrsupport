@@ -55,12 +55,12 @@ namespace AvrSupport::PortLib {
             Register8 config_b,
             Register8 interrupt_mask,
             Register8 interrupt_flag
-        ):
-            timer_counter(timer_counter),
-            compare_a(compare_a), compare_b(compare_b),
-            config_a(config_a), config_b(config_b),
-            interrupt_mask(interrupt_mask),
-            interrupt_flag(interrupt_flag)
+        ) :
+            timer_counter{timer_counter},
+            compare_a{compare_a}, compare_b{compare_b},
+            config_a{config_a}, config_b{config_b},
+            interrupt_mask{interrupt_mask},
+            interrupt_flag{interrupt_flag}
         {}
 
         void set_timer_length(TimerSize duration) {

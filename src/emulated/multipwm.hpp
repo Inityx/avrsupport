@@ -31,12 +31,12 @@ namespace AvrSupport::Emulated {
             Array<uint8_t, COUNT> const &levels,
             DigitalPort &port
         ) :
-            pins(pins),
-            levels(levels),
-            port(port),
-            counter(0),
-            active(true),
-            selection(0)
+            pins{pins},
+            levels{levels},
+            port{port},
+            counter{0},
+            active{true},
+            selection{0}
         {}
 
         void set_level(PinIndex index, uint8_t value) {
