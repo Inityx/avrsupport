@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 
-namespace AVRSupport::Utility {
-    template<typename Type, uint8_t Size>
+namespace AvrSupport::Utility {
+    template<typename Type, uint8_t SIZE>
     struct Array {
         using size_type       = uint8_t;
         using reference       = Type &;
@@ -12,18 +12,18 @@ namespace AVRSupport::Utility {
         using iterator        = Type *;
         using iterator_const  = Type const*;
 
-        Type _storage[Size ? Size : 1]; // Allow zero-sized arrays
+        Type _storage[SIZE ? SIZE : 1]; // Allow zero-sized arrays
 
         // Iterators
         iterator       begin()       { return &_storage[0]; }
         iterator_const begin() const { return &_storage[0]; }
-        iterator       end()         { return &_storage[Size]; }
-        iterator_const end()   const { return &_storage[Size]; }
+        iterator       end()         { return &_storage[SIZE]; }
+        iterator_const end()   const { return &_storage[SIZE]; }
         
         // Capacity
-        constexpr size_type size()     const { return Size; }
-        constexpr size_type max_size() const { return Size; }
-        constexpr bool      empty()    const { return Size == 0; }
+        constexpr size_type size()     const { return SIZE; }
+        constexpr size_type max_size() const { return SIZE; }
+        constexpr bool      empty()    const { return SIZE == 0; }
         
         // Accessors
         reference       operator[](size_type const i)       { return _storage[i]; }
@@ -31,12 +31,12 @@ namespace AVRSupport::Utility {
     };
 
     // Comparisons
-    template<typename Type, uint8_t Size>
+    template<typename Type, uint8_t SIZE>
     bool operator==(
-        Array<Type, Size> const & l,
-        Array<Type, Size> const & r
+        Array<Type, SIZE> const & l,
+        Array<Type, SIZE> const & r
     ) {
-        for(
+        for (
             auto lb = l.begin(),
                  rb = r.begin(),
                  le = l.end(),
@@ -50,10 +50,10 @@ namespace AVRSupport::Utility {
         return true;
     }
 
-    template<typename Type, uint8_t Size>
+    template<typename Type, uint8_t SIZE>
     bool operator!=(
-        Array<Type, Size> const & l,
-        Array<Type, Size> const & r
+        Array<Type, SIZE> const & l,
+        Array<Type, SIZE> const & r
     ) {
         return !(l == r);
     }

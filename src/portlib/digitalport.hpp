@@ -3,7 +3,7 @@
 
 #include "portlib.hpp"
 
-namespace AVRSupport::PortLib {
+namespace AvrSupport::PortLib {
     struct DigitalPort {
         // Members
         Register8 pinx, portx,  ddrx;

@@ -1,7 +1,10 @@
 #ifndef TIMER_H
 #define TIMER_H
 
-namespace AVRSupport::PortLib {
+#include <stdint.h>
+#include "portlib.hpp"
+
+namespace AvrSupport::PortLib {
     template<typename TimerSize>
     struct Timer {
         using RegisterT = Register<TimerSize>;

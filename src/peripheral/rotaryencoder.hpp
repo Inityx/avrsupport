@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-namespace AVRSupport::Peripheral {
+namespace AvrSupport::Peripheral {
     struct RotaryEncoder {
         struct QuaternaryStream {
             uint8_t stream;

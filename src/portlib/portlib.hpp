@@ -3,11 +3,12 @@
 
 #include <stdint.h>
 
-namespace AVRSupport::PortLib {
+namespace AvrSupport::PortLib {
     template<typename RegSize>
     using Register = volatile RegSize &;
 
     using Register8 = Register<uint8_t>;
+    using Register16 = Register<uint16_t>;
 
     typedef uint8_t PinIndex;
 }

@@ -2,8 +2,9 @@
 #define DIGITALPIN_H
 
 #include "portlib.hpp"
+#include "digitalport.hpp"
 
-namespace AVRSupport::PortLib {
+namespace AvrSupport::PortLib {
     struct DigitalPin {
     protected:
         // Members

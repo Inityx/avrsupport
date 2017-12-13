@@ -9,7 +9,7 @@
 
 #include "../utility/array.hpp"
 
-namespace AVRSupport::Emulated {
+namespace AvrSupport::Emulated {
     using PortLib::DigitalPort;
     using PortLib::PinIndex;
     using Utility::Array;
@@ -44,7 +44,7 @@ namespace AVRSupport::Emulated {
         }
         
         void isolate_selected() {
-            for(uint8_t i{0}; i<COUNT; i++)
+            for (uint8_t i{0}; i<COUNT; i++)
                 if (i != selection)
                     port.set_low(pins[i]);
 
@@ -54,14 +54,14 @@ namespace AVRSupport::Emulated {
         void step() {
             if (!active) return;
 
-            if(counter > 0) {
+            if (counter > 0) {
                 // Set pins low if count passed level
-                for(PinIndex i{0}; i<COUNT; i++)
-                    if(counter > levels[i])
+                for (PinIndex i{0}; i<COUNT; i++)
+                    if (counter > levels[i])
                         port.set_low(pins[i]);
             } else {
                 // Set all pins high at start
-                for(PinIndex i{0}; i<COUNT; i++)
+                for (PinIndex i{0}; i<COUNT; i++)
                     if (levels[i] != 0)
                         port.set_high(pins[i]);
             }

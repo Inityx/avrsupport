@@ -7,7 +7,7 @@
 #include "../portlib/digitalport.hpp"
 #include "../portlib/timer.hpp"
 
-namespace AVRSupport {
+namespace AvrSupport {
     using PortLib::DigitalPort;
     using PortLib::Timer;
 
