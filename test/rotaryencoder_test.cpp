@@ -3,15 +3,15 @@
 
 #include "peripheral/rotaryencoder.hpp"
 
-using Rotary = AVRSupport::Peripheral::RotaryEncoder;
+using Rotary = AvrSupport::Peripheral::RotaryEncoder;
 
-template<size_t count>
-using Actions = std::array<std::array<int, 2>, count>;
+template<size_t COUNT>
+using Actions = std::array<std::array<int, 2>, COUNT>;
 
-template<size_t count>
+template<size_t COUNT>
 void rotary_apply(
     Rotary &rotary,
-    Actions<count> &actions
+    Actions<COUNT> &actions
 ) {
     for(auto &a : actions) rotary.update(a[0], a[1]);
 }

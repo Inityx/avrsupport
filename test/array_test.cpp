@@ -2,7 +2,7 @@
 #include <cassert>
 #include <cstdint>
 
-using AVRSupport::Utility::Array;
+using AvrSupport::Utility::Array;
 
 template<typename T, uint8_t COUNT>
 bool arg_value_test(

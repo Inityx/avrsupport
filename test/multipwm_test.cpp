@@ -2,7 +2,7 @@
 
 #include "emulated/multipwm.hpp"
 
-using namespace AVRSupport;
+using namespace AvrSupport;
 
 using Utility::Array;
 using PortLib::DigitalPort;
