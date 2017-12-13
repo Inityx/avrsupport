@@ -6,9 +6,7 @@
 #include "portlib.hpp"
 
 namespace AvrSupport::PortLib {
-    using eesize_t = uint16_t;
-
-    template<eesize_t EEPROM_SIZE>
+    template<eeprom_size_t EEPROM_SIZE>
     struct Eeprom {
         enum struct ControlMask : uint8_t {
             read         = 0b0001,
@@ -17,18 +15,18 @@ namespace AvrSupport::PortLib {
             interrupt    = 0b1000
         };
 
-        Register8 data, control; // EEDR, EECR
-        Register16 address;      // EEAR
+        Register8 data, control;         // EEDR, EECR
+        Register<eeprom_size_t> address; // EEAR
         
         bool is_writing() { return control & ControlMask::write; }
 
-        uint8_t read_byte(eesize_t const location) {
+        uint8_t read_byte(eeprom_size_t const location) {
             address = location;
             control |= ControlMask::read;
             return data;
         }
 
-        void write_byte(eesize_t const location, uint8_t const value) {
+        void write_byte(eeprom_size_t const location, uint8_t const value) {
             address = location;
             data = value;
             control |= ControlMask::master_write;
@@ -36,25 +34,25 @@ namespace AvrSupport::PortLib {
         }
     };
     
-    template<eesize_t EEPROM_SIZE>
+    template<eeprom_size_t EEPROM_SIZE>
     struct BufferEeprom : public Eeprom<EEPROM_SIZE> {
         using Eeprom = Eeprom<EEPROM_SIZE>;
 
         BufferEeprom(
             Register8 eedr,
             Register8 eecr,
-            Register16 eear
+            Register<eeprom_size_t> eear
         ) :
             Eeprom{eedr, eecr, eear}
         {}
 
         template<typename ReadType>
-        void sync_read(eesize_t location, ReadType & dest) {
+        void sync_read(eeprom_size_t location, ReadType & dest) {
             auto dest_byte = static_cast<uint8_t *>(&dest);
 
             while (Eeprom::is_writing());
 
-            for (uint8_t i{0}; i < sizeof(ReadType); i++) {
+            for (uint8_t _{0}; _ < sizeof(ReadType); _++) {
                 *dest_byte = Eeprom::read_byte(location);
                 location++;
                 dest_byte++;
@@ -62,10 +60,10 @@ namespace AvrSupport::PortLib {
         }
         
         template<typename WriteType>
-        void sync_write(eesize_t location, WriteType const & source) {
+        void sync_write(eeprom_size_t location, WriteType const & source) {
             auto source_byte = static_cast <uint8_t const *>(&source);
 
-            for (uint8_t i{0}; i < sizeof(WriteType); i++) {
+            for (uint8_t _{0}; _ < sizeof(WriteType); _++) {
                 while (Eeprom::is_writing());
 
                 Eeprom::write_byte(location, *source_byte); 
@@ -75,7 +73,7 @@ namespace AvrSupport::PortLib {
         }
     };
     
-    template<eesize_t EEPROM_SIZE, typename StorageType>
+    template<eeprom_size_t EEPROM_SIZE, typename StorageType>
     struct ValueEeprom : public BufferEeprom<EEPROM_SIZE> {
         using BufferEeprom = BufferEeprom<EEPROM_SIZE>;
 
@@ -84,7 +82,7 @@ namespace AvrSupport::PortLib {
         ValueEeprom(
             Register8 eedr,
             Register8 eecr,
-            Register16 eear
+            Register<eeprom_size_t> eear
         ) :
             BufferEeprom{eedr, eecr, eear},
             location{0}

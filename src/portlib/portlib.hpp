@@ -11,6 +11,7 @@ namespace AvrSupport::PortLib {
     using Register16 = Register<uint16_t>;
 
     typedef uint8_t PinIndex;
+    typedef uint16_t eeprom_size_t;
 }
 
 #endif
