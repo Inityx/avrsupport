@@ -36,24 +36,23 @@ namespace AvrSupport::PortLib {
     
     template<eeprom_size_t EEPROM_SIZE>
     struct BufferEeprom : public Eeprom<EEPROM_SIZE> {
-        using Eeprom = Eeprom<EEPROM_SIZE>;
-
+        using BaseEeprom = Eeprom<EEPROM_SIZE>;
         BufferEeprom(
             Register8 eedr,
             Register8 eecr,
             Register<eeprom_size_t> eear
         ) :
-            Eeprom{eedr, eecr, eear}
+            Eeprom<EEPROM_SIZE>{eedr, eecr, eear}
         {}
 
         template<typename ReadType>
         void sync_read(eeprom_size_t location, ReadType & dest) {
             auto dest_byte = static_cast<uint8_t *>(&dest);
 
-            while (Eeprom::is_writing());
+            while (BaseEeprom::is_writing());
 
             for (uint8_t _{0}; _ < sizeof(ReadType); _++) {
-                *dest_byte = Eeprom::read_byte(location);
+                *dest_byte = BaseEeprom::read_byte(location);
                 location++;
                 dest_byte++;
             }
@@ -64,40 +63,105 @@ namespace AvrSupport::PortLib {
             auto source_byte = static_cast <uint8_t const *>(&source);
 
             for (uint8_t _{0}; _ < sizeof(WriteType); _++) {
-                while (Eeprom::is_writing());
+                while (BaseEeprom::is_writing());
 
-                Eeprom::write_byte(location, *source_byte); 
+                BaseEeprom::write_byte(location, *source_byte); 
                 location++;
                 source_byte++;
             }
         }
+
+        void sync_write_string(
+            eeprom_size_t location,
+            char const * source
+        ) {
+            while (true) {
+                BaseEeprom::write_byte(location, *source);
+                if (!*source) break;
+                location++;
+                source++;
+            }
+        }
+
+        void sync_read_string(
+            eeprom_size_t location,
+            char * dest,
+            eeprom_size_t const max_length
+        ) {
+            for (eeprom_size_t _{0}; _ < max_length; _++) {
+                *dest = BaseEeprom::read_byte(location);
+                if (!*dest) break;
+                location++;
+                dest++;
+            }
+        };
     };
     
-    template<eeprom_size_t EEPROM_SIZE, typename StorageType>
+    template<eeprom_size_t EEPROM_SIZE, typename ValueType>
     struct ValueEeprom : public BufferEeprom<EEPROM_SIZE> {
-        using BufferEeprom = BufferEeprom<EEPROM_SIZE>;
+        using BaseBufferEeprom = BufferEeprom<EEPROM_SIZE>;
 
-        StorageType *location;
+        struct Storage {
+            bool active; 
+            ValueType value;
+            static eeprom_size_t const VALUE_OFFSET{
+                static_cast<eeprom_size_t>(
+                    &(static_cast<Storage *>(0)->value)
+                )
+            };
+        };
+
+        Storage *location;
 
         ValueEeprom(
             Register8 eedr,
             Register8 eecr,
             Register<eeprom_size_t> eear
         ) :
-            BufferEeprom{eedr, eecr, eear},
+            BaseBufferEeprom{eedr, eecr, eear},
             location{0}
-        {}
-
-        void sync_read(StorageType & dest) {
-            BufferEeprom::template sync_read<StorageType>(location, dest);
+        {
+            move_to_active();
         }
 
-        void sync_write(StorageType const & source) {
+        void move_to_active() {
+            bool active;
+
+            // Increment location until active found
+            while(location < EEPROM_SIZE) {
+                BaseBufferEeprom::template sync_read<bool>(location, active);
+                if (active) return;
+                location++;
+            }
+
+            // Active not found
+            location = 0;
+        }
+        
+        void sync_read(ValueType & dest) {
+            BaseBufferEeprom::template sync_read<ValueType>(
+                static_cast<eeprom_size_t>(location) + Storage::VALUE_OFFSET,
+                dest
+            );
+        }
+
+        void sync_write(ValueType const & source) {
             // Wear levelling
             location++;
             if (location + 1 > EEPROM_SIZE) location = 0;
             
-            BufferEeprom::template sync_write<StorageType>(location, source);
+            // Write new value
+            BaseBufferEeprom::template sync_write<Storage>(
+                location,
+                { true, source }
+            );
+
+            // Deactivate previous
+            if (location > 0)
+                BaseBufferEeprom::template sync_write<bool>(
+                    location - 1,
+                    false
+                );
         }
     };
 }
