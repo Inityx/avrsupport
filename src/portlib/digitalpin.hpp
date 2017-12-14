@@ -18,7 +18,7 @@ namespace AvrSupport::PortLib {
             PinIndex const index
         ) :
             port{port},
-            bitmask{1<<index}
+            bitmask{static_cast<uint8_t>(1<<index)}
         {}
 
         // Accessors
