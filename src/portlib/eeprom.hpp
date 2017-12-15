@@ -18,19 +18,21 @@ namespace AvrSupport::PortLib {
         Register8 data, control;         // EEDR, EECR
         Register<eeprom_size_t> address; // EEAR
         
-        bool is_writing() { return control & ControlMask::write; }
+        bool is_writing() {
+            return control & static_cast<uint8_t>(ControlMask::write);
+        }
 
         uint8_t read_byte(eeprom_size_t const location) {
             address = location;
-            control |= ControlMask::read;
+            control |= static_cast<uint8_t>(ControlMask::read);
             return data;
         }
 
         void write_byte(eeprom_size_t const location, uint8_t const value) {
             address = location;
             data = value;
-            control |= ControlMask::master_write;
-            control |= ControlMask::write;
+            control |= static_cast<uint8_t>(ControlMask::master_write);
+            control |= static_cast<uint8_t>(ControlMask::write);
         }
     };
     
@@ -47,7 +49,7 @@ namespace AvrSupport::PortLib {
 
         template<typename ReadType>
         void sync_read(eeprom_size_t location, ReadType & dest) {
-            auto dest_byte = static_cast<uint8_t *>(&dest);
+            auto dest_byte = reinterpret_cast<uint8_t *>(&dest);
 
             while (BaseEeprom::is_writing());
 
@@ -71,10 +73,7 @@ namespace AvrSupport::PortLib {
             }
         }
 
-        void sync_write_string(
-            eeprom_size_t location,
-            char const * source
-        ) {
+        void sync_write_string(eeprom_size_t location, char const * source) {
             while (true) {
                 BaseEeprom::write_byte(location, *source);
                 if (!*source) break;
@@ -104,14 +103,13 @@ namespace AvrSupport::PortLib {
         struct Storage {
             bool active; 
             ValueType value;
+
             static eeprom_size_t const VALUE_OFFSET{
-                static_cast<eeprom_size_t>(
-                    &(static_cast<Storage *>(0)->value)
-                )
+                static_cast<eeprom_size_t>(&(static_cast<Storage *>(0)->value))
             };
         };
 
-        Storage *location;
+        eeprom_size_t location;
 
         ValueEeprom(
             Register8 eedr,
@@ -125,13 +123,12 @@ namespace AvrSupport::PortLib {
         }
 
         void move_to_active() {
-            bool active;
-
             // Increment location until active found
             while(location < EEPROM_SIZE) {
-                BaseBufferEeprom::template sync_read<bool>(location, active);
+                bool active;
+                BaseBufferEeprom::sync_read(location, active);
                 if (active) return;
-                location++;
+                location += sizeof(Storage);
             }
 
             // Active not found
@@ -139,29 +136,23 @@ namespace AvrSupport::PortLib {
         }
         
         void sync_read(ValueType & dest) {
-            BaseBufferEeprom::template sync_read<ValueType>(
-                static_cast<eeprom_size_t>(location) + Storage::VALUE_OFFSET,
+            BaseBufferEeprom::sync_read(
+                location + Storage::VALUE_OFFSET,
                 dest
             );
         }
 
         void sync_write(ValueType const & source) {
             // Wear levelling
-            location++;
+            location += sizeof(Storage);
             if (location + 1 > EEPROM_SIZE) location = 0;
             
             // Write new value
-            BaseBufferEeprom::template sync_write<Storage>(
-                location,
-                { true, source }
-            );
+            BaseBufferEeprom::sync_write(location, { true, source });
 
             // Deactivate previous
             if (location > 0)
-                BaseBufferEeprom::template sync_write<bool>(
-                    location - 1,
-                    false
-                );
+                BaseBufferEeprom::sync_write(location - sizeof(Storage), false);
         }
     };
 }
