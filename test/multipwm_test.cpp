@@ -18,7 +18,10 @@ int main() {
 
     DigitalPort port_a{ PINA, PORTA, DDRA };
     MultiPWM<3, 1> pwm { PINS, LEVELS, port_a };
-        
+
+    pwm.set_pins_out();
+
+    assert(DDRA  == 0b111);
     assert(PORTA == 0b000);
 
     pwm.step();

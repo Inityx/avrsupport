@@ -17,15 +17,14 @@ namespace AvrSupport::Emulated {
     template<PinIndex COUNT, uint8_t STEP>
     struct MultiPWM {
     private:
+        DigitalPort &port;
         Array<PinIndex, COUNT> pins;
         Array<uint8_t, COUNT> levels;
-        DigitalPort &port;
+        PinIndex selection;
         uint8_t counter;
+        bool active;
         
     public:
-        bool active;
-        PinIndex selection;
-        
         constexpr MultiPWM(
             Array<PinIndex, COUNT> const &pins,
             Array<uint8_t, COUNT> const &levels,
@@ -39,6 +38,11 @@ namespace AvrSupport::Emulated {
             selection{0}
         {}
 
+        void set_pins_out() {
+            for (PinIndex i : pins)
+                port.set_out(i);
+        }
+
         void set_level(PinIndex index, uint8_t value) {
             levels[index] = value;
         }
@@ -50,6 +54,9 @@ namespace AvrSupport::Emulated {
 
             port.set_high(pins[selection]);
         }
+
+        void pause() { active = false; }
+        void resume() { active = true; }
 
         void step() {
             if (!active) return;
