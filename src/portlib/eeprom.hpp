@@ -39,14 +39,7 @@ namespace AvrSupport::PortLib {
     template<eeprom_size_t EEPROM_SIZE>
     struct BufferEeprom : public Eeprom<EEPROM_SIZE> {
         using BaseEeprom = Eeprom<EEPROM_SIZE>;
-        BufferEeprom(
-            Register8 eedr,
-            Register8 eecr,
-            Register<eeprom_size_t> eear
-        ) :
-            Eeprom<EEPROM_SIZE>{eedr, eecr, eear}
-        {}
-
+        
         template<typename ReadType>
         void sync_read(eeprom_size_t location, ReadType & dest) {
             auto dest_byte = reinterpret_cast<uint8_t *>(&dest);

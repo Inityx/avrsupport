@@ -24,12 +24,12 @@ namespace AvrSupport::Peripheral {
         bool turned_left()  const { return stream == 0b00'01'10'00; }
 
         bool shift_mid_state(bool a, bool b, uint8_t join) {
-                if (b) return false; // Ignore
-                if (!a) return true; // Accept ground
-                if (stream.penult() != join) return true; // Accept middle transition
-                // Reject backwards partial
-                stream.unshift();
-                return false;
+            if (b) return false; // Ignore
+            if (!a) return true; // Accept ground
+            if (stream.penult() != join) return true; // Accept middle transition
+            // Reject backwards partial
+            stream.unshift();
+            return false;
         }
 
         void update(bool a, bool b) {
