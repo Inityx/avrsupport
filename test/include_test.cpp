@@ -5,6 +5,7 @@
 #include "portlib/eeprom.hpp"
 
 #include "peripheral/rotaryencoder.hpp"
+#include "peripheral/shiftregister.hpp"
 
 #include "emulated/multipwm.hpp"
 
