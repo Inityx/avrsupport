@@ -4,20 +4,19 @@
 #include <stdint.h>
 #include <avr/io.h>
 
-#include "../portlib/digitalport.hpp"
-#include "../portlib/timer.hpp"
+#include "portlib/digitalport.hpp"
+#include "portlib/timer.hpp"
 
 namespace AvrSupport {
-    using PortLib::DigitalPort;
-    using PortLib::Timer;
+    namespace PortLib {
+        using Timer0 = Timer<uint8_t>;
+        using Timer1 = Timer<uint16_t>;
+    }
 
-    using Timer0 = Timer<uint8_t>;
-    using Timer1 = Timer<uint16_t>;
+    PortLib::DigitalPort port_a{ PINA, PORTA, DDRA };
+    PortLib::DigitalPort port_b{ PINB, PORTB, DDRB };
 
-    DigitalPort port_a{ PINA, PORTA, DDRA };
-    DigitalPort port_b{ PINB, PORTB, DDRB };
-
-    Timer0 timer_0 {
+    PortLib::Timer0 timer_0 {
         TCNT0,
         OCR0A, OCR0B,
         TCCR0A, TCCR0B,
@@ -25,7 +24,7 @@ namespace AvrSupport {
         TIFR0
     };
 
-    Timer1 timer_1 {
+    PortLib::Timer1 timer_1 {
         TCNT1,
         OCR1A, OCR1B,
         TCCR1A, TCCR1B,

@@ -1,21 +1,24 @@
 #ifndef SHIFTREGISTER_H
 #define SHIFTREGISTER_H
 
+#include <limits.h>
+
 #include "portlib/digitalpin.hpp"
 
-namespace AvrSupport::Peripheral {
-    using PortLib::DigitalPin;
+#include "utility/array.hpp"
+#include "utility/bytewise.hpp"
 
+namespace AvrSupport::Peripheral {
     template<
-        DigitalPin * const data,
-        DigitalPin * const clock,
-        DigitalPin * const latch,
-        DigitalPin * const master_reset,
-        DigitalPin * const output_enable
+        PortLib::DigitalPin * const data,
+        PortLib::DigitalPin * const shift_clock,
+        PortLib::DigitalPin * const storage_clock = nullptr,
+        PortLib::DigitalPin * const master_reset = nullptr,
+        PortLib::DigitalPin * const output_enable = nullptr
     >
     struct ShiftRegister {
-        static_assert(data);
-        static_assert(clock);
+        static_assert(data, "Data pin must not be null.");
+        static_assert(shift_clock, "Shift clock pin must not be null.");
 
         void enable() {
             if constexpr (output_enable)
@@ -25,43 +28,83 @@ namespace AvrSupport::Peripheral {
             if constexpr (output_enable)
                 output_enable->set_high();
         }
-        void update_latch() {
-            if constexpr (latch) {
-                latch->set_high();
-                latch->set_low();
+        void latch() {
+            if constexpr (storage_clock) {
+                storage_clock->set_high();
+                storage_clock->set_low();
             }
         }
-        void reset() {
+        void clear() {
             if constexpr (master_reset) {
                 master_reset->set_low();
                 master_reset->set_high();
-                update_latch();
+                latch();
             }
         }
         void initialize() {
-            clock->set_low();
-            reset();
+            shift_clock->set_low();
             enable();
+            clear();
         }
 
-        void shift_in_unlatched(bool value) {
+        void shift_bit_unlatched(bool value) {
             data->set(value);
-            clock->set_high();
-            clock->set_low();
+            shift_clock->set_high();
+            shift_clock->set_low();
         }
-        void shift_in(bool value) {
-            shift_in_unlatched(value);
-            update_latch();
-        }
-        void shift_byte_up(uint8_t value) {
+        void shift_up_unlatched(uint8_t value) {
             for(uint8_t mask{1}; mask; mask <<= 1)
-                shift_in_unlatched(value & mask);
-            update_latch();
+                shift_bit_unlatched(value & mask);
         }
-        void shift_byte_down(uint8_t value) {
+        void shift_down_unlatched(uint8_t value) {
             for(uint8_t mask{0b1000'0000}; mask; mask >>= 1)
-                shift_in_unlatched(value & mask);
-            update_latch();
+                shift_bit_unlatched(value & mask);
+        }
+
+        void shift_bit(bool value) {
+            shift_bit_unlatched(value);
+            latch();
+        }
+        void shift_up(uint8_t value) {
+            shift_up_unlatched(value);
+            latch();
+        }
+        void shift_down(uint8_t value) {
+            shift_down_unlatched(value);
+            latch();
+        }
+
+        template<typename Type>
+        void shift_up_big_endian(Type const & value) {
+            Utility::Bytewise::for_each_big_endian(
+                value,
+                [this](uint8_t byte) { shift_up_unlatched(byte); }
+            );
+            latch();
+        }
+        template<typename Type>
+        void shift_down_big_endian(Type const & value) {
+            Utility::Bytewise::for_each_big_endian(
+                value,
+                [this](uint8_t byte) { shift_down_unlatched(byte); }
+            );
+            latch();
+        }
+        template<typename Type>
+        void shift_up_little_endian(Type const & value) {
+            Utility::Bytewise::for_each_little_endian(
+                value,
+                [this](uint8_t byte) { shift_up_unlatched(byte); }
+            );
+            latch();
+        }
+        template<typename Type>
+        void shift_down_little_endian(Type const & value) {
+            Utility::Bytewise::for_each_little_endian(
+                value,
+                [this](uint8_t byte) { shift_down_unlatched(byte); }
+            );
+            latch();
         }
     };
 }

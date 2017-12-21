@@ -4,7 +4,7 @@
 
 using AvrSupport::Utility::Array;
 
-template<typename T, uint8_t COUNT>
+template<typename T, AvrSupport::Utility::array_size_t COUNT>
 bool arg_value_test(
     Array<T, COUNT> const custom,
     T const * native
@@ -15,7 +15,7 @@ bool arg_value_test(
     return true;
 }
 
-template<typename T, uint8_t COUNT>
+template<typename T, AvrSupport::Utility::array_size_t COUNT>
 bool arg_reference_test(
     Array<T, COUNT> const & custom,
     T const * native

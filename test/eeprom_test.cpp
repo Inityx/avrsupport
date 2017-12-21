@@ -1,7 +1,8 @@
 #include "portlib/portlib.hpp"
 #include "portlib/eeprom.hpp"
 
-#include <stdint.h>
+#include <cstdint>
+#include <cassert>
 
 using namespace AvrSupport;
 
@@ -14,19 +15,16 @@ struct MyStruct {
     uint8_t * thingo; uint8_t thingy;
 };
 
-int buffer_eeprom_test() {
+void buffer_eeprom_test() {
     PortLib::BufferEeprom<EEPROM_SIZE> eeprom{EEDR, EECR, EEAR};
-    return 0;
 }
 
-int value_eeprom_test() {
+void value_eeprom_test() {
     PortLib::ValueEeprom<EEPROM_SIZE, MyStruct> eeprom{EEDR, EECR, EEAR};
-    return 0;
 }
 
 int main() {
-    return (
-        buffer_eeprom_test() ||
-        value_eeprom_test()
-    );
+    buffer_eeprom_test();
+    value_eeprom_test();
+    return 0;
 }

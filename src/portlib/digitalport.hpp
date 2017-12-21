@@ -1,9 +1,11 @@
 #ifndef DIGITALPORT_H
 #define DIGITALPORT_H
 
-#include "portlib.hpp"
+#include "portlib/register.hpp"
 
 namespace AvrSupport::PortLib {
+    typedef uint8_t PinIndex;
+
     struct DigitalPort {
         // Members
         Register8 pinx, portx,  ddrx;

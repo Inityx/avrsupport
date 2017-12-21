@@ -4,31 +4,27 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include "../portlib/portlib.hpp"
-#include "../portlib/digitalport.hpp"
+#include "portlib/register.hpp"
+#include "portlib/digitalport.hpp"
 
-#include "../utility/array.hpp"
+#include "utility/array.hpp"
 
 namespace AvrSupport::Emulated {
-    using PortLib::DigitalPort;
-    using PortLib::PinIndex;
-    using Utility::Array;
-
-    template<PinIndex COUNT, uint8_t STEP>
+    template<PortLib::PinIndex COUNT, uint8_t STEP>
     struct MultiPWM {
     private:
-        DigitalPort &port;
-        Array<PinIndex, COUNT> pins;
-        Array<uint8_t, COUNT> levels;
-        PinIndex selection;
+        PortLib::DigitalPort &port;
+        Utility::Array<PortLib::PinIndex, COUNT> pins;
+        Utility::Array<uint8_t, COUNT> levels;
+        PortLib::PinIndex selection;
         uint8_t counter;
         bool active;
         
     public:
         constexpr MultiPWM(
-            Array<PinIndex, COUNT> const &pins,
-            Array<uint8_t, COUNT> const &levels,
-            DigitalPort &port
+            Utility::Array<PortLib::PinIndex, COUNT> const &pins,
+            Utility::Array<uint8_t, COUNT> const &levels,
+            PortLib::DigitalPort &port
         ) :
             pins{pins},
             levels{levels},
@@ -39,11 +35,11 @@ namespace AvrSupport::Emulated {
         {}
 
         void set_pins_out() {
-            for (PinIndex i : pins)
+            for (PortLib::PinIndex i : pins)
                 port.set_out(i);
         }
 
-        void set_level(PinIndex index, uint8_t value) {
+        void set_level(PortLib::PinIndex index, uint8_t value) {
             levels[index] = value;
         }
         
@@ -63,12 +59,12 @@ namespace AvrSupport::Emulated {
 
             if (counter > 0) {
                 // Set pins low if count passed level
-                for (PinIndex i{0}; i<COUNT; i++)
+                for (PortLib::PinIndex i{0}; i<COUNT; i++)
                     if (counter > levels[i])
                         port.set_low(pins[i]);
             } else {
                 // Set all pins high at start
-                for (PinIndex i{0}; i<COUNT; i++)
+                for (PortLib::PinIndex i{0}; i<COUNT; i++)
                     if (levels[i] != 0)
                         port.set_high(pins[i]);
             }

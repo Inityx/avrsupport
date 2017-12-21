@@ -3,9 +3,13 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include "portlib.hpp"
+
+#include "portlib/register.hpp"
+#include "utility/bytewise.hpp"
 
 namespace AvrSupport::PortLib {
+    typedef uint16_t eeprom_size_t;
+
     template<eeprom_size_t EEPROM_SIZE>
     struct Eeprom {
         enum struct ControlMask : uint8_t {
@@ -42,7 +46,7 @@ namespace AvrSupport::PortLib {
         
         template<typename ReadType>
         void sync_read(eeprom_size_t location, ReadType & dest) {
-            auto dest_byte = reinterpret_cast<uint8_t *>(&dest);
+            auto dest_byte = Utility::Bytewise::iter_begin(dest);
 
             while (BaseEeprom::is_writing());
 
@@ -55,7 +59,7 @@ namespace AvrSupport::PortLib {
         
         template<typename WriteType>
         void sync_write(eeprom_size_t location, WriteType const & source) {
-            auto source_byte = static_cast <uint8_t const *>(&source);
+            auto source_byte = Utility::Bytewise::iter_begin(source);
 
             for (uint8_t _{0}; _ < sizeof(WriteType); _++) {
                 while (BaseEeprom::is_writing());
@@ -98,7 +102,9 @@ namespace AvrSupport::PortLib {
             ValueType value;
 
             static eeprom_size_t const VALUE_OFFSET{
-                static_cast<eeprom_size_t>(&(static_cast<Storage *>(0)->value))
+                static_cast<eeprom_size_t const>(
+                    &(static_cast<Storage *>(0)->value)
+                )
             };
         };
 

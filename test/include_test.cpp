@@ -1,4 +1,4 @@
-#include "portlib/portlib.hpp"
+#include "portlib/register.hpp"
 #include "portlib/digitalport.hpp"
 #include "portlib/digitalpin.hpp"
 #include "portlib/timer.hpp"
@@ -10,5 +10,6 @@
 #include "emulated/multipwm.hpp"
 
 #include "utility/array.hpp"
+#include "utility/bytewise.hpp"
 
 int main() {}

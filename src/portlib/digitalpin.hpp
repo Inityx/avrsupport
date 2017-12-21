@@ -1,7 +1,7 @@
 #ifndef DIGITALPIN_H
 #define DIGITALPIN_H
 
-#include "portlib.hpp"
+#include "portlib/register.hpp"
 #include "digitalport.hpp"
 
 namespace AvrSupport::PortLib {
