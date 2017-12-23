@@ -1,8 +1,6 @@
 #ifndef SHIFTREGISTER_H
 #define SHIFTREGISTER_H
 
-#include <limits.h>
-
 #include "portlib/digitalpin.hpp"
 
 #include "utility/array.hpp"
@@ -12,16 +10,16 @@ namespace AvrSupport::Peripheral {
     /**
      * Shift Register
      * 
-     * A latching or Non-latching shift register driver. Data and shift clock
+     * A latching or non-latching shift register driver. Data and shift clock
      * are the only required pins; any pins passed `nullptr` will have their
-     * functionality omitted. Simply omit storage clock or pass it `nullptr`
-     * for non-latching shift registers.
+     * functionality omitted. Simply omit `storage_clock` or pass it `nullptr`
+     * for use with non-latching shift registers.
      * 
-     * @param data
-     * @param shift_clock
-     * @param storage_clock
-     * @param master_reset
-     * @param output_enable
+     * @tparam data          Data pin
+     * @tparam shift_clock   Shift clock pin
+     * @tparam storage_clock Storage clock (latch) pin
+     * @tparam master_reset  Master reset pin
+     * @tparam output_enable Output enable pin
      */
     template<
         PortLib::DigitalPin * const data,
@@ -31,27 +29,27 @@ namespace AvrSupport::Peripheral {
         PortLib::DigitalPin * const output_enable = nullptr
     >
     struct ShiftRegister {
-        static_assert(data, "Data pin must not be null.");
+        static_assert(data,        "Data pin must not be null.");
         static_assert(shift_clock, "Shift clock pin must not be null.");
 
-        /** Enable output. */
+        /** Enable output (`output_enable` pin). */
         void enable() {
             if constexpr (output_enable)
                 output_enable->set_low();
         }
-        /** Disable output. */
+        /** Disable output (`output_enable` pin). */
         void disable() {
             if constexpr (output_enable)
                 output_enable->set_high();
         }
-        /** Pulse storage clock (latch) pin. */
+        /** Pulse latch (`storage_clock` pin). */
         void latch() {
             if constexpr (storage_clock) {
                 storage_clock->set_high();
                 storage_clock->set_low();
             }
         }
-        /** Clear pins and pulse latch. */
+        /** Clear pins (`master_reset` pin) and pulse latch. */
         void clear() {
             if constexpr (master_reset) {
                 master_reset->set_low();
@@ -69,81 +67,93 @@ namespace AvrSupport::Peripheral {
             clear();
         }
 
-        /** Shift in a bit without pulsing latch. */
-        void shift_bit_unlatched(bool value) {
-            data->set(value);
+        /** Shift in a bit without pulsing latch. @param bit */
+        void shift_bit_unlatched(bool bit) {
+            data->set(bit);
             shift_clock->set_high();
             shift_clock->set_low();
         }
-        /** Shift in a byte LSB first without pulsing latch. */
-        void shift_up_unlatched(uint8_t value) {
+        /** Shift in a byte LSB-first without pulsing latch. @param byte */
+        void shift_up_unlatched(uint8_t byte) {
             for(uint8_t mask{1}; mask; mask <<= 1)
-                shift_bit_unlatched(value & mask);
+                shift_bit_unlatched(byte & mask);
         }
-        /** Shift in a byte MSB first without pulsing latch. */
-        void shift_down_unlatched(uint8_t value) {
+        /** Shift in a byte MSB-first without pulsing latch. @param byte */
+        void shift_down_unlatched(uint8_t byte) {
             for(uint8_t mask{0b1000'0000}; mask; mask >>= 1)
-                shift_bit_unlatched(value & mask);
+                shift_bit_unlatched(byte & mask);
         }
 
-        /** Shift in a bit and pulse latch. */
-        void shift_bit(bool value) {
-            shift_bit_unlatched(value);
+        /** Shift in a bit and pulse latch. @param bit */
+        void shift_bit(bool bit) {
+            shift_bit_unlatched(bit);
             latch();
         }
-        /** Shift in a byte LSB first and pulse latch. */
-        void shift_up(uint8_t value) {
-            shift_up_unlatched(value);
+        /** Shift in a byte LSB-first and pulse latch. @param byte */
+        void shift_up(uint8_t byte) {
+            shift_up_unlatched(byte);
             latch();
         }
-        /** Shift in a byte MSB first and pulse latch. */
-        void shift_down(uint8_t value) {
-            shift_down_unlatched(value);
+        /** Shift in a byte MSB-first and pulse latch. @param byte */
+        void shift_down(uint8_t byte) {
+            shift_down_unlatched(byte);
             latch();
         }
 
         /**
-         * Shift LSB first/big endian and pulse latch.
-         * Shift a struct or value with bytes in increasing order, LSB first.
+         * Shift [big endian]/[LSB-first] and pulse latch.
+         * Shift in a struct or primitive, bytes in increasing order, LSB first.
+         * @param value
          */
         template<typename Type>
         void shift_up_big_endian(Type const & value) {
             using each_byte = Utility::Bytewise::BigEndianConst<Type>;
+
             for (uint8_t byte : each_byte{value})
                 shift_up_unlatched(byte);
+            
             latch();
         }
         /**
-         * Shift MSB first/big endian and pulse latch.
-         * Shift a struct or value with bytes in increasing order, MSB first.
+         * Shift [big endian]/[MSB-first] and pulse latch.
+         * Shift in a struct or primitive, bytes in increasing order, MSB first.
+         * @param value
          */
         template<typename Type>
         void shift_down_big_endian(Type const & value) {
             using each_byte = Utility::Bytewise::BigEndianConst<Type>;
+
             for (uint8_t byte : each_byte{value})
                 shift_down_unlatched(byte);
+            
             latch();
         }
         /**
-         * Shift LSB first/little endian and pulse latch.
-         * Shift a struct or value with bytes in decreasing order, LSB first.
+         * Shift [little endian]/[LSB-first] and pulse latch.
+         * Shift in a struct or value, bytes in decreasing order, LSB first.
+         * @param value
          */
         template<typename Type>
         void shift_up_little_endian(Type const & value) {
             using each_byte = Utility::Bytewise::LittleEndianConst<Type>;
+
             for (uint8_t byte : each_byte{value})
                 shift_up_unlatched(byte);
+
             latch();
         }
         /**
-         * Shift MSB first/little endian and pulse latch.
-         * Shift a struct or value with bytes in decreasing order, MSB first.
+         * Shift [little endian]/[MSB-first] and pulse latch.
+         * Shift in a struct or value, bytes in decreasing order, MSB first.
+         * @param value
          */
         template<typename Type>
         void shift_down_little_endian(Type const & value) {
             using each_byte = Utility::Bytewise::LittleEndianConst<Type>;
+
             for (uint8_t byte : each_byte{value})
                 shift_down_unlatched(byte);
+            
             latch();
         }
     };

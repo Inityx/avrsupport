@@ -6,56 +6,75 @@
 namespace AvrSupport::Utility::Bytewise {
     using bytewise_size_t = uint16_t;
 
-    template<typename ByteType>
-    struct BigEndianIter {
-        using SelfClass = BigEndianIter<ByteType>;
-        ByteType * address;
-        
-        ByteType & operator* () { return *address; }
-        bool operator==(SelfClass const & rhs) { return address == rhs.address; }
-        bool operator!=(SelfClass const & rhs) { return address != rhs.address; }
-        
-        SelfClass & operator++()                    { address++;      return *this; }
-        SelfClass & operator--()                    { address--;      return *this; }
-        SelfClass & operator+=(bytewise_size_t rhs) { address += rhs; return *this; }
-        SelfClass & operator-=(bytewise_size_t rhs) { address -= rhs; return *this; }
-        SelfClass   operator++(int)                 { return SelfClass{ address++ }; }
-        SelfClass   operator--(int)                 { return SelfClass{ address-- }; }
-        SelfClass   operator+ (bytewise_size_t rhs) { return SelfClass{ address + rhs }; }
-        SelfClass   operator- (bytewise_size_t rhs) { return SelfClass{ address - rhs }; }
-    };
-
-    template<typename ByteType>
-    struct LittleEndianIter : public BigEndianIter<ByteType> {
-        using SelfClass = LittleEndianIter<ByteType>;
-        SelfClass & operator++()                    { this->address--;      return *this; }
-        SelfClass & operator--()                    { this->address++;      return *this; }
-        SelfClass & operator+=(bytewise_size_t rhs) { this->address -= rhs; return *this; }
-        SelfClass & operator-=(bytewise_size_t rhs) { this->address += rhs; return *this; }
-        SelfClass   operator++(int)                 { return SelfClass{ this->address-- }; }
-        SelfClass   operator--(int)                 { return SelfClass{ this->address++ }; }
-        SelfClass   operator+ (bytewise_size_t rhs) { return SelfClass{ this->address - rhs }; }
-        SelfClass   operator- (bytewise_size_t rhs) { return SelfClass{ this->address + rhs }; }
-    };
-
+    /**
+     * A big endian bytewise iterator adapter.
+     * 
+     * This adapter yields an iterator over each byte of a struct or primitive
+     * going forwards, as would be appropriate for big-endian architectures or
+     * contiguous data structures.
+     * 
+     * @tparam SourceType The type of the iterated object
+     * @tparam ByteType   The type of byte to yield (esp. const/mut)
+     */
     template<typename SourceType, typename ByteType = uint8_t>
     struct BigEndian {
-        using IterType = BigEndianIter<ByteType>;
+        static_assert(sizeof(ByteType) == 1, "The ByteType must be one byte.");
+
+        /** A big endian (forwards) bytewise iterator. */
+        struct Iter {
+            ByteType * address;
+            
+            ByteType & operator* () { return *address; }
+            bool operator==(Iter const & rhs) { return address == rhs.address; }
+            bool operator!=(Iter const & rhs) { return address != rhs.address; }
+            
+            Iter & operator++()                    { address++;      return *this; }
+            Iter & operator--()                    { address--;      return *this; }
+            Iter & operator+=(bytewise_size_t rhs) { address += rhs; return *this; }
+            Iter & operator-=(bytewise_size_t rhs) { address -= rhs; return *this; }
+            Iter   operator++(int)                 { return Iter{ address++ }; }
+            Iter   operator--(int)                 { return Iter{ address-- }; }
+            Iter   operator+ (bytewise_size_t rhs) { return Iter{ address + rhs }; }
+            Iter   operator- (bytewise_size_t rhs) { return Iter{ address - rhs }; }
+        };
+
         SourceType & target;
 
         constexpr BigEndian(SourceType & target) : target{target} {}
-        IterType begin() { return IterType{reinterpret_cast<ByteType *>(&target    )}; }
-        IterType end()   { return IterType{reinterpret_cast<ByteType *>(&target + 1)}; }
+        Iter begin() { return Iter{reinterpret_cast<ByteType *>(&target    )}; }
+        Iter end()   { return Iter{reinterpret_cast<ByteType *>(&target + 1)}; }
     };
 
+    /**
+     * A little endian bytewise iterator adapter.
+     * 
+     * This adapter yields an iterator over each byte of a struct or primitive
+     * going backwards, as would be appropriate for little-endian architectures.
+     * 
+     * @tparam SourceType The type of the iterated object
+     * @tparam ByteType   The type of byte to yield (esp. const/mut)
+     */
     template<typename SourceType, typename ByteType = uint8_t>
     struct LittleEndian {
-        using IterType = LittleEndianIter<ByteType>;
+        static_assert(sizeof(ByteType) == 1, "The ByteType must be one byte.");
+
+        /** A little endian (backwards) backwardsiterator. */
+        struct Iter : public BigEndian<SourceType, ByteType>::Iter {
+            Iter & operator++()                    { this->address--;      return *this; }
+            Iter & operator--()                    { this->address++;      return *this; }
+            Iter & operator+=(bytewise_size_t rhs) { this->address -= rhs; return *this; }
+            Iter & operator-=(bytewise_size_t rhs) { this->address += rhs; return *this; }
+            Iter   operator++(int)                 { return Iter{ this->address-- }; }
+            Iter   operator--(int)                 { return Iter{ this->address++ }; }
+            Iter   operator+ (bytewise_size_t rhs) { return Iter{ this->address - rhs }; }
+            Iter   operator- (bytewise_size_t rhs) { return Iter{ this->address + rhs }; }
+        };
+
         SourceType & target;
 
         constexpr LittleEndian(SourceType & target) : target{target} {}
-        IterType begin() { return IterType{reinterpret_cast<ByteType *>(&target + 1) - 1}; }
-        IterType end()   { return IterType{reinterpret_cast<ByteType *>(&target    ) - 1}; }
+        Iter begin() { return Iter{reinterpret_cast<ByteType *>(&target + 1) - 1}; }
+        Iter end()   { return Iter{reinterpret_cast<ByteType *>(&target    ) - 1}; }
     };
 
     template<typename SourceType> using BigEndianConst    = BigEndian   <SourceType, uint8_t const>;
