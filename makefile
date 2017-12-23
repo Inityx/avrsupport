@@ -12,8 +12,12 @@ endif
 # Structure
 MODULES=portlib peripheral emulated chips utility
 
+# Docs
+DOXYGEN=doxygen
+
 # Targets
 .PHONY: all includes test test_clean clean configure
+.PHONY: docs docs_view docs_clean
 
 all: includes
 
@@ -63,3 +67,16 @@ configure: .nvimrc
 .nvimrc:
 	@echo "Generating local .nvimrc..."
 	@echo "let g:syntastic_cpp_compiler = '$(CXX)'" > .nvimrc
+
+# Docs
+DOXYFILE=Doxyfile
+DOCS=docs/build
+HTML=$(DOCS)/html
+docs:
+	$(DOXYGEN) $(DOXYFILE)
+
+docs_view: docs
+	xdg-open $(HTML)/index.html
+
+docs_clean:
+	rm -rf $(HTML)
