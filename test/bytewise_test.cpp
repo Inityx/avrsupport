@@ -4,93 +4,123 @@
 #include <cassert>
 #include <cstdint>
 #include <cstring>
+#include <vector>
+
+#include <cstdio>
 
 using namespace AvrSupport::Utility;
-template<typename T> using Array5 = Array<T, 5>;
 
-void iter_const() {
-    const Array5<uint8_t> array{ 5, 4, 2, 3, 1 };
+template<size_t COUNT> using Bytes    = const Array<uint8_t, COUNT>;
+template<size_t COUNT> using BytesMut =       Array<uint8_t, COUNT>;
 
-    uint8_t const
-        * begin = Bytewise::iter_begin(array),
-        * end   = Bytewise::iter_end(array);
-
-    assert(begin[0] == 5 && begin[1] == 4);
-    assert(end == &array[5]);
+void scramble(uint8_t & byte, uint8_t & prev) {
+    uint8_t temp = byte;
+    byte += prev;
+    prev = temp;
 }
 
-void iter_mut() {
-    Array5<uint8_t> array{ 5, 4, 2, 3, 1 };
+template<typename Correct, typename Tested>
+bool compare(Correct correct, Tested tested) {
+    for (size_t i{0}; i<correct.size(); i++)
+        if (correct[i] != tested[i])
+            return false;
 
-    uint8_t
-        * begin = Bytewise::iter_begin(array),
-        * end   = Bytewise::iter_end(array);
-
-    assert(begin == &array[0]);
-    assert(end   == &array[5]);
-
-    begin[0]++;
-    assert(array[0] == 6);
+    return true;
 }
 
-void for_each_const() {
-    const Array5<uint8_t> array{ 5, 4, 2, 3, 1 };    
-    Array5<char> string;
+void array_const_big_endian() {
+    using each_byte = Bytewise::BigEndianConst<Bytes<5>>;
+    Bytes<5> array{ 5, 4, 2, 3, 1 }, correct{array};
+    std::vector<uint8_t> accum;
+
+    for (uint8_t const & byte : each_byte{array}) accum.push_back(byte);
     
-    char * string_iter;
-    auto stringifier = [&](uint8_t const byte) {
-        *string_iter = static_cast<char>('0' + byte);
-        string_iter++;
-    };
+    assert(compare(correct, accum));
+}
+void array_const_little_endian() {
+    using each_byte = Bytewise::LittleEndianConst<Bytes<5>>;
+    Bytes<5> array{ 5, 4, 2, 3, 1 }, correct{ 1, 3, 2, 4, 5};
+    std::vector<uint8_t> accum;
 
-    string_iter = &string[0];
-    Bytewise::for_each_big_endian(array, stringifier);
-    assert(
-        strncmp(
-            reinterpret_cast<char *>(&string),
-            "54231",
-            sizeof(string)
-        ) == 0
-    );
+    for (uint8_t const & byte : each_byte{array}) accum.push_back(byte);
 
-    string_iter = &string[0];
-    Bytewise::for_each_little_endian(array, stringifier);
-    assert(
-        strncmp(
-            reinterpret_cast<char *>(&string),
-            "13245",
-            sizeof(string)
-        ) == 0
-    );
+    assert(compare(correct, accum));
+}
+void array_mut_big_endian() {
+    using each_byte = Bytewise::BigEndian<BytesMut<5>>;
+    BytesMut<5> array{ 5, 4, 2, 3, 1 };
+    Bytes<5>  correct{ 5, 9, 6, 5, 4 };
+    uint8_t prev{0};
+
+    for (auto & byte : each_byte{array}) scramble(byte, prev);
+
+    assert(compare(correct, array));
+}
+void array_mut_little_endian() {
+    using each_byte = Bytewise::LittleEndian<BytesMut<5>>;
+    BytesMut<5> array{ 5, 4, 2, 3, 1 };
+    Bytes<5>  correct{ 9, 6, 5, 4, 1 };
+    uint8_t prev{0};
+
+    for (auto & byte : each_byte{array}) scramble(byte, prev);
+
+    assert(compare(correct, array));
 }
 
-void for_each_mut() {
-    Array5<uint8_t>
-        array1{ 5, 4, 2, 3, 1 },
-        array2{ array1 },
-        shiftenated_big_endian   { 5, 9, 6, 5, 4 },
-        shiftenated_little_endian{ 9, 6, 5, 4, 1 };
+void primitive_const_big_endian() {
+    using each_byte = Bytewise::BigEndianConst<uint32_t>;
+    uint32_t source{0xAB'CD'EF'00};
+    Bytes<4> correct{ 0x00, 0xEF, 0xCD, 0xAB };
+    std::vector<uint8_t> accum;
+    
+    for (uint8_t const & byte : each_byte{source}) accum.push_back(byte);
+    
+    assert(compare(correct, accum));
+}
+void primitive_const_little_endian() {
+    using each_byte = Bytewise::LittleEndianConst<uint32_t>;
+    uint32_t source{0xAB'CD'EF'00};
+    Bytes<4> correct{ 0xAB, 0xCD, 0xEF, 0x00 };
+    std::vector<uint8_t> accum;
+    
+    for (uint8_t const & byte : each_byte{source}) accum.push_back(byte);
+    
+    assert(compare(correct, accum));
+}
+void primitive_mut_big_endian() {
+    using each_byte = Bytewise::BigEndian<uint32_t>;
+    std::vector<uint8_t> source{ 0xAB, 0xCD, 0xEF, 0x00 };
+    uint32_t correct{0xAB'CD'EF'00}, dest{0};
+    
+    for (uint8_t & byte : each_byte{dest}) {
+        byte = source.back();
+        source.pop_back();
+    }
+    
+    assert(dest == correct);
+}
+void primitive_mut_little_endian() {
+    using each_byte = Bytewise::LittleEndian<uint32_t>;
+    std::vector<uint8_t> source{ 0xAB, 0xCD, 0xEF, 0x00 };
+    uint32_t correct{0x00'EF'CD'AB}, dest{0};
 
-    int accumulator;
-    auto shiftenator = [&](uint8_t & byte) {
-        uint8_t temp = byte;
-        byte += accumulator;
-        accumulator = temp;
-    };
-
-    accumulator = 0;
-    Bytewise::for_each_big_endian(array1, shiftenator);
-    assert(array1 == shiftenated_big_endian);
-
-    accumulator = 0;
-    Bytewise::for_each_little_endian(array2, shiftenator);
-    assert(array2 == shiftenated_little_endian);
+    for (uint8_t & byte : each_byte{dest}) {
+        byte = source.back();
+        source.pop_back();
+    }
+    assert(dest == correct);
 }
 
 int main() { 
-    iter_const();
-    iter_mut();
-    for_each_const();
-    for_each_mut();
+    array_const_big_endian();
+    array_const_little_endian();
+    array_mut_big_endian();
+    array_mut_little_endian();
+
+    primitive_const_big_endian();
+    primitive_const_little_endian();
+    primitive_mut_big_endian();
+    primitive_mut_little_endian();
+
     return 0;
 }

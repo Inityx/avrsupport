@@ -4,61 +4,62 @@
 #include <stdint.h>
 
 namespace AvrSupport::Utility::Bytewise {
-    // Bytewise iterators
-    template<typename Type>
-    constexpr uint8_t const * iter_begin(Type const & value) {
-        return reinterpret_cast<uint8_t const *>(&value);
-    }
-    
-    template<typename Type>
-    constexpr uint8_t       * iter_begin(Type       & value) {
-        return reinterpret_cast<uint8_t       *>(&value);
-    }
-    
-    template<typename Type>
-    constexpr uint8_t const * iter_end  (Type const & value) {
-        return reinterpret_cast<uint8_t const *>(&value + 1);
-    }
+    using bytewise_size_t = uint16_t;
 
-    template<typename Type>
-    constexpr uint8_t       * iter_end  (Type       & value) {
-        return reinterpret_cast<uint8_t       *>(&value + 1);
-    }
+    template<typename ByteType>
+    struct BigEndianIter {
+        using SelfClass = BigEndianIter<ByteType>;
+        ByteType * address;
+        
+        ByteType & operator* () { return *address; }
+        bool operator==(SelfClass const & rhs) { return address == rhs.address; }
+        bool operator!=(SelfClass const & rhs) { return address != rhs.address; }
+        
+        SelfClass & operator++()                    { address++;      return *this; }
+        SelfClass & operator--()                    { address--;      return *this; }
+        SelfClass & operator+=(bytewise_size_t rhs) { address += rhs; return *this; }
+        SelfClass & operator-=(bytewise_size_t rhs) { address -= rhs; return *this; }
+        SelfClass   operator++(int)                 { return SelfClass{ address++ }; }
+        SelfClass   operator--(int)                 { return SelfClass{ address-- }; }
+        SelfClass   operator+ (bytewise_size_t rhs) { return SelfClass{ address + rhs }; }
+        SelfClass   operator- (bytewise_size_t rhs) { return SelfClass{ address - rhs }; }
+    };
 
-    // Bytewise foreach
-    template<typename Type, typename Func>
-    void for_each_big_endian(Type       & value, Func callback) {
-        uint8_t       *       current{iter_begin(value)};
-        uint8_t const * const end    {iter_end  (value)};
-        
-        for (; current != end; current++)
-            callback(*current);
-    }
-    template<typename Type, typename Func>
-    void for_each_big_endian(Type const & value, Func callback) {
-        uint8_t const *       current{iter_begin(value)};
-        uint8_t const * const end    {iter_end  (value)};
-        
-        for (; current != end; current++)
-            callback(*current);
-    }
+    template<typename ByteType>
+    struct LittleEndianIter : public BigEndianIter<ByteType> {
+        using SelfClass = LittleEndianIter<ByteType>;
+        SelfClass & operator++()                    { this->address--;      return *this; }
+        SelfClass & operator--()                    { this->address++;      return *this; }
+        SelfClass & operator+=(bytewise_size_t rhs) { this->address -= rhs; return *this; }
+        SelfClass & operator-=(bytewise_size_t rhs) { this->address += rhs; return *this; }
+        SelfClass   operator++(int)                 { return SelfClass{ this->address-- }; }
+        SelfClass   operator--(int)                 { return SelfClass{ this->address++ }; }
+        SelfClass   operator+ (bytewise_size_t rhs) { return SelfClass{ this->address - rhs }; }
+        SelfClass   operator- (bytewise_size_t rhs) { return SelfClass{ this->address + rhs }; }
+    };
 
-    template<typename Type, typename Func>
-    void for_each_little_endian(Type       & value, Func callback) {
-        uint8_t       *       current{iter_end  (value) - 1};
-        uint8_t const * const begin  {iter_begin(value) - 1};
-        
-        for (; current != begin; current--)
-            callback(*current);
-    }
-    template<typename Type, typename Func>
-    void for_each_little_endian(Type const & value, Func callback) {
-        uint8_t const *       current{iter_end  (value) - 1};
-        uint8_t const * const begin  {iter_begin(value) - 1};
-        
-        for (; current != begin; current--)
-            callback(*current);
-    }
+    template<typename SourceType, typename ByteType = uint8_t>
+    struct BigEndian {
+        using IterType = BigEndianIter<ByteType>;
+        SourceType & target;
+
+        constexpr BigEndian(SourceType & target) : target{target} {}
+        IterType begin() { return IterType{reinterpret_cast<ByteType *>(&target    )}; }
+        IterType end()   { return IterType{reinterpret_cast<ByteType *>(&target + 1)}; }
+    };
+
+    template<typename SourceType, typename ByteType = uint8_t>
+    struct LittleEndian {
+        using IterType = LittleEndianIter<ByteType>;
+        SourceType & target;
+
+        constexpr LittleEndian(SourceType & target) : target{target} {}
+        IterType begin() { return IterType{reinterpret_cast<ByteType *>(&target + 1) - 1}; }
+        IterType end()   { return IterType{reinterpret_cast<ByteType *>(&target    ) - 1}; }
+    };
+
+    template<typename SourceType> using BigEndianConst    = BigEndian   <SourceType, uint8_t const>;
+    template<typename SourceType> using LittleEndianConst = LittleEndian<SourceType, uint8_t const>;
 }
 
 #endif

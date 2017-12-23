@@ -76,34 +76,30 @@ namespace AvrSupport::Peripheral {
 
         template<typename Type>
         void shift_up_big_endian(Type const & value) {
-            Utility::Bytewise::for_each_big_endian(
-                value,
-                [this](uint8_t byte) { shift_up_unlatched(byte); }
-            );
+            using each_byte = Utility::Bytewise::BigEndianConst<Type>;
+            for (uint8_t byte : each_byte{value})
+                shift_up_unlatched(byte);
             latch();
         }
         template<typename Type>
         void shift_down_big_endian(Type const & value) {
-            Utility::Bytewise::for_each_big_endian(
-                value,
-                [this](uint8_t byte) { shift_down_unlatched(byte); }
-            );
+            using each_byte = Utility::Bytewise::BigEndianConst<Type>;
+            for (uint8_t byte : each_byte{value})
+                shift_down_unlatched(byte);
             latch();
         }
         template<typename Type>
         void shift_up_little_endian(Type const & value) {
-            Utility::Bytewise::for_each_little_endian(
-                value,
-                [this](uint8_t byte) { shift_up_unlatched(byte); }
-            );
+            using each_byte = Utility::Bytewise::LittleEndianConst<Type>;
+            for (uint8_t byte : each_byte{value})
+                shift_up_unlatched(byte);
             latch();
         }
         template<typename Type>
         void shift_down_little_endian(Type const & value) {
-            Utility::Bytewise::for_each_little_endian(
-                value,
-                [this](uint8_t byte) { shift_down_unlatched(byte); }
-            );
+            using each_byte = Utility::Bytewise::LittleEndianConst<Type>;
+            for (uint8_t byte : each_byte{value})
+                shift_down_unlatched(byte);
             latch();
         }
     };

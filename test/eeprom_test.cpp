@@ -1,4 +1,4 @@
-#include "portlib/portlib.hpp"
+#include "portlib/register.hpp"
 #include "portlib/eeprom.hpp"
 
 #include <cstdint>
@@ -12,7 +12,8 @@ uint8_t EEDR, EECR;
 uint16_t EEAR;
 
 struct MyStruct {
-    uint8_t * thingo; uint8_t thingy;
+    uint8_t * thingo;
+    uint8_t thingy;
 };
 
 void buffer_eeprom_test() {

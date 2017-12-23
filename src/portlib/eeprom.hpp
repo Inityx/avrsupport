@@ -43,30 +43,28 @@ namespace AvrSupport::PortLib {
     template<eeprom_size_t EEPROM_SIZE>
     struct BufferEeprom : public Eeprom<EEPROM_SIZE> {
         using BaseEeprom = Eeprom<EEPROM_SIZE>;
-        
+
         template<typename ReadType>
         void sync_read(eeprom_size_t location, ReadType & dest) {
-            auto dest_byte = Utility::Bytewise::iter_begin(dest);
+            using EachByte = Utility::Bytewise::BigEndian<ReadType>;
 
             while (BaseEeprom::is_writing());
 
-            for (uint8_t _{0}; _ < sizeof(ReadType); _++) {
-                *dest_byte = BaseEeprom::read_byte(location);
+            for (uint8_t & byte : EachByte{dest}) {
+                dest = BaseEeprom::read_byte(location);
                 location++;
-                dest_byte++;
             }
         }
         
         template<typename WriteType>
         void sync_write(eeprom_size_t location, WriteType const & source) {
-            auto source_byte = Utility::Bytewise::iter_begin(source);
+            using EachByteConst = Utility::Bytewise::BigEndianConst<WriteType>;
 
-            for (uint8_t _{0}; _ < sizeof(WriteType); _++) {
+            for (uint8_t const & byte : EachByteConst{source}) {
                 while (BaseEeprom::is_writing());
 
-                BaseEeprom::write_byte(location, *source_byte); 
+                BaseEeprom::write_byte(location, byte); 
                 location++;
-                source_byte++;
             }
         }
 
