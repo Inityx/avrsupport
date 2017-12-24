@@ -1,4 +1,5 @@
-#include "utility/array.hpp"
+#include <utility/array.hpp>
+
 #include <cassert>
 #include <cstdint>
 

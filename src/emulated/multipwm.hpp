@@ -4,10 +4,10 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include "portlib/register.hpp"
-#include "portlib/digitalport.hpp"
+#include <portlib/register.hpp>
+#include <portlib/digitalport.hpp>
 
-#include "utility/array.hpp"
+#include <utility/array.hpp>
 
 namespace AvrSupport::Emulated {
     template<PortLib::PinIndex COUNT, uint8_t STEP>

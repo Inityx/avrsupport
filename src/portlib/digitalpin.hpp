@@ -1,8 +1,8 @@
 #ifndef DIGITALPIN_H
 #define DIGITALPIN_H
 
-#include "portlib/register.hpp"
-#include "digitalport.hpp"
+#include <portlib/register.hpp>
+#include <portlib/digitalport.hpp>
 
 namespace AvrSupport::PortLib {
     struct DigitalPin {

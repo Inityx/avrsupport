@@ -48,7 +48,7 @@ test: includes $(TEST_BUILD) test_clean
 
 test/build/%.out: test/%.cpp
 	@printf " Testing $(notdir $(basename $@))... "
-	@$(CXX) $< -o $@ $(CFLAGS) $(CFLAGS_TEST) -iquote include/
+	@$(CXX) $< -o $@ $(CFLAGS) $(CFLAGS_TEST) -I include/
 	@$@
 	@echo -e "$(GREEN)Success$(RESET)."
 

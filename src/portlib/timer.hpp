@@ -2,7 +2,7 @@
 #define TIMER_H
 
 #include <stdint.h>
-#include "portlib/register.hpp"
+#include <portlib/register.hpp>
 
 namespace AvrSupport::PortLib {
     template<typename TimerSize>

@@ -1,10 +1,10 @@
 #ifndef SHIFTREGISTER_H
 #define SHIFTREGISTER_H
 
-#include "portlib/digitalpin.hpp"
+#include <portlib/digitalpin.hpp>
 
-#include "utility/array.hpp"
-#include "utility/bytewise.hpp"
+#include <utility/array.hpp>
+#include <utility/bytewise.hpp>
 
 namespace AvrSupport::Peripheral {
     /**

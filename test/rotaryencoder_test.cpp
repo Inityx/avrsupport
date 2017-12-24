@@ -1,7 +1,7 @@
 #include <cassert>
 #include <array>
 
-#include "peripheral/rotaryencoder.hpp"
+#include <peripheral/rotaryencoder.hpp>
 
 using Rotary = AvrSupport::Peripheral::RotaryEncoder;
 

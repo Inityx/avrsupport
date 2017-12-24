@@ -4,8 +4,8 @@
 #include <stdint.h>
 #include <avr/io.h>
 
-#include "portlib/digitalport.hpp"
-#include "portlib/timer.hpp"
+#include <portlib/digitalport.hpp>
+#include <portlib/timer.hpp>
 
 namespace AvrSupport {
     namespace PortLib {

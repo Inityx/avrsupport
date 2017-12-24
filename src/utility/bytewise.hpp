@@ -13,8 +13,8 @@ namespace AvrSupport::Utility::Bytewise {
      * going forwards, as would be appropriate for big-endian architectures or
      * contiguous data structures.
      * 
-     * @tparam SourceType The type of the iterated object
-     * @tparam ByteType   The type of byte to yield (esp. const/mut)
+     * @tparam SourceType The datatype to be iterated over
+     * @tparam ByteType   The type of byte to yield (e.g. char, uint8_t const, etc.)
      */
     template<typename SourceType, typename ByteType = uint8_t>
     struct BigEndian {
@@ -24,7 +24,8 @@ namespace AvrSupport::Utility::Bytewise {
         struct Iter {
             ByteType * address;
             
-            ByteType & operator* () { return *address; }
+            ByteType & operator* () { return *address; } ///< Dereference
+            operator ByteType*()    { return  address; } ///< Pointer coercion
             bool operator==(Iter const & rhs) { return address == rhs.address; }
             bool operator!=(Iter const & rhs) { return address != rhs.address; }
             
@@ -51,8 +52,8 @@ namespace AvrSupport::Utility::Bytewise {
      * This adapter yields an iterator over each byte of a struct or primitive
      * going backwards, as would be appropriate for little-endian architectures.
      * 
-     * @tparam SourceType The type of the iterated object
-     * @tparam ByteType   The type of byte to yield (esp. const/mut)
+     * @tparam SourceType The datatype to be iterated over
+     * @tparam ByteType   The type of byte to yield (e.g. char, uint8_t const, etc.)
      */
     template<typename SourceType, typename ByteType = uint8_t>
     struct LittleEndian {

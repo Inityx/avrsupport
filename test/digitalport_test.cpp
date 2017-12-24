@@ -1,6 +1,6 @@
 #include <cassert>
 
-#include "portlib/digitalport.hpp"
+#include <portlib/digitalport.hpp>
 
 using AvrSupport::PortLib::DigitalPort;
 

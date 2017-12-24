@@ -1,7 +1,7 @@
 #ifndef DIGITALPORT_H
 #define DIGITALPORT_H
 
-#include "portlib/register.hpp"
+#include <portlib/register.hpp>
 
 namespace AvrSupport::PortLib {
     typedef uint8_t PinIndex;

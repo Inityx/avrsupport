@@ -4,8 +4,8 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include "portlib/register.hpp"
-#include "utility/bytewise.hpp"
+#include <portlib/register.hpp>
+#include <utility/bytewise.hpp>
 
 namespace AvrSupport::PortLib {
     using eeprom_size_t = uint16_t;
@@ -85,7 +85,7 @@ namespace AvrSupport::PortLib {
      * @tparam EEPROM_SIZE Size of the device EEPROM in bytes
      */
     template<eeprom_size_t EEPROM_SIZE>
-    struct BufferEeprom : public Eeprom<EEPROM_SIZE> {
+    struct BufferEeprom : private Eeprom<EEPROM_SIZE> {
     private:
         using BaseEeprom = Eeprom<EEPROM_SIZE>;
 
@@ -181,7 +181,7 @@ namespace AvrSupport::PortLib {
      * @tparam EEPROM_SIZE Size of the device EEPROM in bytes
      */
     template<eeprom_size_t EEPROM_SIZE, typename ValueType>
-    struct ValueEeprom : public BufferEeprom<EEPROM_SIZE> {
+    struct ValueEeprom : private BufferEeprom<EEPROM_SIZE> {
     private:
         using BaseBufferEeprom = BufferEeprom<EEPROM_SIZE>;
 
