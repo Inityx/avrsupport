@@ -28,46 +28,36 @@ namespace AvrSupport::PortLib {
             interrupt    = 0b1000
         };
 
-        Register8 data, control;         // EEDR, EECR
-        Register<eeprom_size_t> address; // EEAR
+        Register8 data, control;
+        Register<eeprom_size_t> address;
 
     public:
         /**
-         * Default constructor.
-         * @param eedr Data register (`EEDR`)
-         * @param eecr Control register (`EECR`)
-         * @param eear Address register (`EEAR`)
+         * Constructor.
+         * @param EEDR Data register
+         * @param EECR Control register
+         * @param EEAR Address register
          */
         constexpr Eeprom(
-            Register8 eedr,
-            Register8 eecr,
-            Register<eeprom_size_t> eear
+            Register8 EEDR,
+            Register8 EECR,
+            Register<eeprom_size_t> EEAR
         ) :
-            data{eedr},
-            control{eecr},
-            address{eear}
+            data{EEDR},
+            control{EECR},
+            address{EEAR}
         {}
 
-        /** If the EEPROM currently writing or not. */
         bool is_writing() {
             return control & static_cast<uint8_t>(ControlMask::write);
         }
 
-        /**
-         * Read a byte from the EEPROM.
-         * @param location EEPROM location to read from
-         */
         uint8_t read_byte(eeprom_size_t const location) {
             address = location;
             control |= static_cast<uint8_t>(ControlMask::read);
             return data;
         }
 
-        /**
-         * Write a byte to the EEPROM.
-         * @param location EEPROM location to write to
-         * @param byte     Byte to write
-         */
         void write_byte(eeprom_size_t const location, uint8_t const byte) {
             address = location;
             data = byte;
@@ -91,22 +81,22 @@ namespace AvrSupport::PortLib {
 
     public:
         /**
-         * Default constructor.
-         * @param eedr Data register (`EEDR`)
-         * @param eecr Control register (`EECR`)
-         * @param eear Address register (`EEAR`)
+         * Constructor.
+         * @param EEDR Data register
+         * @param EECR Control register
+         * @param EEAR Address register
          */
         constexpr BufferEeprom(
-            Register8 eedr,
-            Register8 eecr,
-            Register<eeprom_size_t> eear
+            Register8 EEDR,
+            Register8 EECR,
+            Register<eeprom_size_t> EEAR
         ) :
-            BaseEeprom{eedr, eecr, eear}
+            BaseEeprom{EEDR, EECR, EEAR}
         {}
 
         /**
-         * Write struct or primitive synchronously.
-         * @param location   EEPROM location to read from
+         * Read struct or primitive synchronously.
+         * @param location   EEPROM location
          * @param [out] dest Memory to write into
          */
         template<typename ReadType>
@@ -121,11 +111,7 @@ namespace AvrSupport::PortLib {
             }
         }
         
-        /**
-         * Write struct or primitive synchronously.
-         * @param location EEPROM location to write to
-         * @param source   Value to write
-         */
+        /// Write struct or primitive synchronously.
         template<typename WriteType>
         void sync_write(eeprom_size_t location, WriteType const & source) {
             using EachByteConst = Utility::Bytewise::BigEndianConst<WriteType>;
@@ -138,11 +124,7 @@ namespace AvrSupport::PortLib {
             }
         }
 
-        /**
-         * Write C-style string synchronously.
-         * @param location    EEPROM location to write to
-         * @param [in] source String to write
-         */
+        /// Write C-style string synchronously.
         void sync_write_string(eeprom_size_t location, char const * source) {
             while (true) {
                 BaseEeprom::write_byte(location, *source);
@@ -154,7 +136,7 @@ namespace AvrSupport::PortLib {
 
         /**
          * Read C-style string synchronously.
-         * @param location   EEPROM location to read from
+         * @param location   EEPROM location
          * @param [out] dest Destination buffer
          * @param max_length Maximum number of bytes to read
          */
@@ -213,19 +195,18 @@ namespace AvrSupport::PortLib {
         
     public:
         /**
-         * Default constructor.
-         * Automatically finds the previous active location from the last power
-         * cycle.
-         * @param eedr Data register (`EEDR`)
-         * @param eecr Control register (`EECR`)
-         * @param eear Address register (`EEAR`)
+         * Constructor. Automatically finds the previous active location
+         * from the last power cycle.
+         * @param EEDR Data register
+         * @param EECR Control register
+         * @param EEAR Address register
          */
         ValueEeprom(
-            Register8 eedr,
-            Register8 eecr,
-            Register<eeprom_size_t> eear
+            Register8 EEDR,
+            Register8 EECR,
+            Register<eeprom_size_t> EEAR
         ) :
-            BaseBufferEeprom{eedr, eecr, eear},
+            BaseBufferEeprom{EEDR, EECR, EEAR},
             location{0}
         {
             move_to_active();

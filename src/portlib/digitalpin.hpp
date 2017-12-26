@@ -5,14 +5,13 @@
 #include <portlib/digitalport.hpp>
 
 namespace AvrSupport::PortLib {
+    /// I/O for a single digital pin
     struct DigitalPin {
     protected:
-        // Members
         DigitalPort &port;
         uint8_t bitmask;
 
     public:
-        // Constructors
         constexpr DigitalPin(
             DigitalPort &port,
             PinIndex const index
@@ -21,7 +20,6 @@ namespace AvrSupport::PortLib {
             bitmask{static_cast<uint8_t>(1<<index)}
         {}
 
-        // Accessors
         bool get() const { return (port.pinx & bitmask) != 0; }
 
         void set_out()  { port.ddrx  |=  bitmask; }
@@ -30,9 +28,9 @@ namespace AvrSupport::PortLib {
         void set_low()  { port.portx &= ~bitmask; }
         void toggle()   { port.portx ^=  bitmask; }
 
-        void set(bool rhs) {
-            if (rhs) set_high();
-            else     set_low ();
+        void set(bool state) {
+            if (state) set_high();
+            else       set_low ();
         }
     };
 }

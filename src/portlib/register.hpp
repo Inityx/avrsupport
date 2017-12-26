@@ -4,11 +4,12 @@
 #include <stdint.h>
 
 namespace AvrSupport::PortLib {
-    template<typename RegSize>
-    using Register = volatile RegSize &;
+    /// Generic variable-size register type
+    template<typename RegisterSize>
+    using Register = volatile RegisterSize &;
 
-    using Register8 = Register<uint8_t>;
-    using Register16 = Register<uint16_t>;
+    using Register8 = Register<uint8_t>;   ///< 8-bit register
+    using Register16 = Register<uint16_t>; ///< 16-bit register
 }
 
 #endif

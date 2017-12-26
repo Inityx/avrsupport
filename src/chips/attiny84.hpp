@@ -1,6 +1,8 @@
 #ifndef ATTINY84_H
 #define ATTINY84_H
 
+/// Definitions for the ATTiny84 chip
+
 #include <stdint.h>
 #include <avr/io.h>
 

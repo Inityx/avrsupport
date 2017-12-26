@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 
+/// %Bytewise operation helper classes
 namespace AvrSupport::Utility::Bytewise {
     using bytewise_size_t = uint16_t;
 

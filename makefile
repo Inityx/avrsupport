@@ -24,7 +24,7 @@ all: includes
 # Includes
 define generate_include
 INCLUDE_DIRS+=include/$(1)
-INCLUDES+=$$(addprefix include/$(1)/, $$(notdir $$(wildcard src/$(1)/*)))
+INCLUDES+=$$(addprefix include/$(1)/, $$(notdir $$(wildcard src/$(1)/*.hpp)))
 
 include/$(1)/%.hpp: src/$(1)/%.hpp | include/$(1)
 	@echo " CP $(1)/$$(notdir $$(basename $$@))"
