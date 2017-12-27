@@ -65,18 +65,18 @@ namespace AvrSupport::Peripheral {
         }
 
         /// Shift in a bit without pulsing latch.
-        void shift_bit_unlatched(bool bit) {
+        void shift_bit_unlatched(bool const bit) {
             data->set(bit);
             shift_clock->set_high();
             shift_clock->set_low();
         }
         /// Shift in a byte LSB-first without pulsing latch.
-        void shift_up_unlatched(uint8_t byte) {
+        void shift_up_unlatched(uint8_t const byte) {
             for(uint8_t mask{1}; mask; mask <<= 1)
                 shift_bit_unlatched(byte & mask);
         }
         /// Shift in a byte MSB-first without pulsing latch.
-        void shift_down_unlatched(uint8_t byte) {
+        void shift_down_unlatched(uint8_t const byte) {
             for(uint8_t mask{0b1000'0000}; mask; mask >>= 1)
                 shift_bit_unlatched(byte & mask);
         }

@@ -16,10 +16,10 @@ namespace AvrSupport::Utility {
         Type _storage[SIZE ? SIZE : 1]; // Allow zero-sized arrays
 
         // Iterators
-        iter       begin()       { return &_storage[0]; }
-        iter_const begin() const { return &_storage[0]; }
-        iter       end()         { return &_storage[SIZE]; }
-        iter_const end()   const { return &_storage[SIZE]; }
+        constexpr iter       begin()       { return &_storage[0]; }
+        constexpr iter_const begin() const { return &_storage[0]; }
+        constexpr iter       end()         { return &_storage[SIZE]; }
+        constexpr iter_const end()   const { return &_storage[SIZE]; }
         
         // Capacity
         constexpr array_size_t size()     const { return SIZE; }
@@ -27,13 +27,13 @@ namespace AvrSupport::Utility {
         constexpr bool         empty()    const { return SIZE == 0; }
         
         // Accessors
-        ref       operator[](array_size_t const i)       { return _storage[i]; }
-        ref_const operator[](array_size_t const i) const { return _storage[i]; }
+        constexpr ref       operator[](array_size_t const i)       { return _storage[i]; }
+        constexpr ref_const operator[](array_size_t const i) const { return _storage[i]; }
     };
 
     // Comparisons
     template<typename Type, array_size_t SIZE>
-    bool operator==(
+    constexpr bool operator==(
         Array<Type, SIZE> const & l,
         Array<Type, SIZE> const & r
     ) {
@@ -52,7 +52,7 @@ namespace AvrSupport::Utility {
     }
 
     template<typename Type, array_size_t SIZE>
-    bool operator!=(
+    constexpr bool operator!=(
         Array<Type, SIZE> const & l,
         Array<Type, SIZE> const & r
     ) {

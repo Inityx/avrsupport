@@ -124,7 +124,12 @@ namespace AvrSupport::PortLib {
             }
         }
 
-        /// Write C-style string synchronously.
+        /**
+         * Write C-style string synchronously.
+         * This function does not perform bounds checking on EEPROM addresses.
+         * @param location EEPROM location
+         * @param source   String to write
+         */
         void sync_write_string(eeprom_size_t location, char const * source) {
             while (true) {
                 BaseEeprom::write_byte(location, *source);
@@ -136,8 +141,10 @@ namespace AvrSupport::PortLib {
 
         /**
          * Read C-style string synchronously.
+         * Reads up to `max_length` bytes, or until a null terminator. This
+         * function does not add a null terminator if the max length is hit.
          * @param location   EEPROM location
-         * @param [out] dest Destination buffer
+         * @param [out] dest Buffer to write into
          * @param max_length Maximum number of bytes to read
          */
         void sync_read_string(

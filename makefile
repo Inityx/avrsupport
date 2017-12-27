@@ -10,7 +10,7 @@ ifneq ($(CI), true)
 endif
 
 # Structure
-MODULES=portlib peripheral emulated chips utility
+MODULES=chips emulated mapping peripheral portlib utility
 
 # Docs
 DOXYGEN=doxygen

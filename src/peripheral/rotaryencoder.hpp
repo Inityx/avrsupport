@@ -23,7 +23,7 @@ namespace AvrSupport::Peripheral {
         bool turned_right() const { return stream == 0b00'10'01'00; }
         bool turned_left()  const { return stream == 0b00'01'10'00; }
 
-        bool shift_mid_state(bool a, bool b, uint8_t join) {
+        bool shift_mid_state(bool const a, bool const b, uint8_t const join) {
             if (b) return false; // Ignore
             if (!a) return true; // Accept ground
             if (stream.penult() != join) return true; // Accept middle transition
@@ -32,7 +32,7 @@ namespace AvrSupport::Peripheral {
             return false;
         }
 
-        void update(bool a, bool b) {
+        void update(bool const a, bool const b) {
             uint8_t join = a<<1|b;
 
             switch (stream.prev()) {
