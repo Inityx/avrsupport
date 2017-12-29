@@ -9,6 +9,7 @@
 
 namespace AvrSupport::PortLib {
     using eeprom_size_t = uint16_t;
+    using RegisterE = Register<eeprom_size_t>;    
 
     /**
      * A base EEPROM driver class.
@@ -29,23 +30,17 @@ namespace AvrSupport::PortLib {
         };
 
         Register8 data, control;
-        Register<eeprom_size_t> address;
+        RegisterE address;
 
     public:
-        /**
-         * Constructor.
-         * @param EEDR Data register
-         * @param EECR Control register
-         * @param EEAR Address register
-         */
         constexpr Eeprom(
-            Register8 EEDR,
-            Register8 EECR,
-            Register<eeprom_size_t> EEAR
+            Register8 eedr,
+            Register8 eecr,
+            RegisterE eear
         ) :
-            data{EEDR},
-            control{EECR},
-            address{EEAR}
+            data{eedr},
+            control{eecr},
+            address{eear}
         {}
 
         bool is_writing() {
@@ -80,18 +75,12 @@ namespace AvrSupport::PortLib {
         using BaseEeprom = Eeprom<EEPROM_SIZE>;
 
     public:
-        /**
-         * Constructor.
-         * @param EEDR Data register
-         * @param EECR Control register
-         * @param EEAR Address register
-         */
         constexpr BufferEeprom(
-            Register8 EEDR,
-            Register8 EECR,
-            Register<eeprom_size_t> EEAR
+            Register8 eedr,
+            Register8 eecr,
+            RegisterE eear
         ) :
-            BaseEeprom{EEDR, EECR, EEAR}
+            BaseEeprom{eedr, eecr, eear}
         {}
 
         /**
@@ -114,7 +103,7 @@ namespace AvrSupport::PortLib {
         /// Write struct or primitive synchronously.
         template<typename WriteType>
         void sync_write(eeprom_size_t location, WriteType const & source) {
-            using EachByteConst = Utility::Bytewise::BigEndianConst<WriteType>;
+            using EachByteConst = Utility::Bytewise::BigEndianConst<WriteType const>;
 
             for (uint8_t const & byte : EachByteConst{source}) {
                 while (BaseEeprom::is_writing());
@@ -178,8 +167,8 @@ namespace AvrSupport::PortLib {
             bool active; 
             ValueType value;
 
-            static eeprom_size_t const VALUE_OFFSET{
-                static_cast<eeprom_size_t const>(
+            static eeprom_size_t constexpr VALUE_OFFSET{
+                reinterpret_cast<eeprom_size_t const>(
                     &(static_cast<Storage *>(0)->value)
                 )
             };
@@ -190,9 +179,7 @@ namespace AvrSupport::PortLib {
         void move_to_active() {
             // Increment location until active found
             while(location < EEPROM_SIZE) {
-                bool active;
-                BaseBufferEeprom::sync_read(location, active);
-                if (active) return;
+                if (is_active()) return;
                 location += sizeof(Storage);
             }
 
@@ -204,19 +191,26 @@ namespace AvrSupport::PortLib {
         /**
          * Constructor. Automatically finds the previous active location
          * from the last power cycle.
-         * @param EEDR Data register
-         * @param EECR Control register
-         * @param EEAR Address register
+         * @param eedr Data register
+         * @param eecr Control register
+         * @param eear Address register
          */
         ValueEeprom(
-            Register8 EEDR,
-            Register8 EECR,
-            Register<eeprom_size_t> EEAR
+            Register8 eedr,
+            Register8 eecr,
+            RegisterE eear
         ) :
-            BaseBufferEeprom{EEDR, EECR, EEAR},
+            BaseBufferEeprom{eedr, eecr, eear},
             location{0}
         {
             move_to_active();
+        }
+
+        // Whether or not the current storage location contains active data
+        bool is_active() {
+            bool active;
+            BaseBufferEeprom::sync_read(location, active);
+            return active;
         }
 
         /**
@@ -235,16 +229,18 @@ namespace AvrSupport::PortLib {
          * @param source Value to write
          */
         void sync_write(ValueType const & source) {
+            auto prev_location = location;
+
             // Wear levelling
             location += sizeof(Storage);
             if (location + 1 > EEPROM_SIZE) location = 0;
             
             // Write new value
-            BaseBufferEeprom::sync_write(location, { true, source });
+            Storage const to_write{true, source};
+            BaseBufferEeprom::sync_write(location, to_write);
 
             // Deactivate previous
-            if (location > 0)
-                BaseBufferEeprom::sync_write(location - sizeof(Storage), false);
+            BaseBufferEeprom::sync_write(prev_location, false);
         }
     };
 }

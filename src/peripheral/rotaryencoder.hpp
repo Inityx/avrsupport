@@ -4,7 +4,9 @@
 #include <stdint.h>
 
 namespace AvrSupport::Peripheral {
+    /// A rotary encoder driver
     struct RotaryEncoder {
+    private:
         struct QuaternaryStream {
             uint8_t stream;
             
@@ -13,18 +15,15 @@ namespace AvrSupport::Peripheral {
 
             void shift_in(uint8_t const state) { stream = stream<<2 | state; }
             void unshift() { stream >>= 2; }
-            uint8_t prev()   const { return (stream & 0b0011);    }
-            uint8_t penult() const { return (stream & 0b1100)>>2; }
+            uint8_t prev()   const { return stream    & 0b11; }
+            uint8_t penult() const { return stream>>2 & 0b11; }
             void clear() { stream = 0; }
         };
-        
+
         QuaternaryStream stream;
 
-        bool turned_right() const { return stream == 0b00'10'01'00; }
-        bool turned_left()  const { return stream == 0b00'01'10'00; }
-
         bool shift_mid_state(bool const a, bool const b, uint8_t const join) {
-            if (b) return false; // Ignore
+            if ( b) return false; // Ignore
             if (!a) return true; // Accept ground
             if (stream.penult() != join) return true; // Accept middle transition
             // Reject backwards partial
@@ -32,8 +31,17 @@ namespace AvrSupport::Peripheral {
             return false;
         }
 
-        void update(bool const a, bool const b) {
-            uint8_t join = a<<1|b;
+    public:
+        bool turned_right() const { return stream == 0b00'10'01'00; }
+        bool turned_left()  const { return stream == 0b00'01'10'00; }
+
+        /**
+         * Update rotary encoder state.
+         * @param a Encoder pin value A
+         * @param b Encoder pin value B
+         */
+        void sample(bool const a, bool const b) {
+            uint8_t join = a<<1 | b;
 
             switch (stream.prev()) {
                 case 0b00: if (a == b)                       return; break;
@@ -45,6 +53,7 @@ namespace AvrSupport::Peripheral {
             stream.shift_in(join);
         }
 
+        /// Clear rotary encoder turn status
         void clear() { stream.clear(); }
     };
 }

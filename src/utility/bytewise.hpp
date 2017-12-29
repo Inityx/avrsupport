@@ -21,7 +21,7 @@ namespace AvrSupport::Utility::Bytewise {
         static_assert(sizeof(ByteType) == 1, "The ByteType must be one byte.");
 
         /** A big endian (forwards) bytewise iterator. */
-        using Iter = Utility::Iterator<ByteType>;
+        struct Iter : public Utility::Iterator<ByteType> {};
 
         SourceType & target;
 
@@ -43,7 +43,7 @@ namespace AvrSupport::Utility::Bytewise {
     struct LittleEndian {
         static_assert(sizeof(ByteType) == 1, "The ByteType must be one byte.");
 
-        /** A little endian (backwards) iterator. */
+        /** A little endian (backwards) bytewise iterator. */
         struct Iter : public Utility::Iterator<ByteType> {
             Iter & operator++()                       { this->address--;      return *this; }
             Iter & operator--()                       { this->address++;      return *this; }

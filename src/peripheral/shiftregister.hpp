@@ -8,7 +8,7 @@
 
 namespace AvrSupport::Peripheral {
     /**
-     * A latching or non-latching shift register driver.
+     * A latching or non-latching parallel output shift register driver.
      * 
      * Data and shift clock are the only required pins; any pins passed
      * `nullptr` will have their functionality omitted. Simply omit
@@ -97,42 +97,42 @@ namespace AvrSupport::Peripheral {
             latch();
         }
 
-        /// Shift in a struct or primitive, bytes in increasing order, LSB first.
+        /// Shift in a struct or primitive, normal byte order, LSB first.
         template<typename Type>
         void shift_up_big_endian(Type const & value) {
-            using each_byte = Utility::Bytewise::BigEndianConst<Type>;
+            using each_byte = Utility::Bytewise::BigEndianConst<Type const>;
 
-            for (uint8_t byte : each_byte{value})
+            for (auto & byte : each_byte{value})
                 shift_up_unlatched(byte);
             
             latch();
         }
-        /// Shift in a struct or primitive, bytes in increasing order, MSB first.
+        /// Shift in a struct or primitive, normal byte order, MSB first.
         template<typename Type>
         void shift_down_big_endian(Type const & value) {
-            using each_byte = Utility::Bytewise::BigEndianConst<Type>;
+            using each_byte = Utility::Bytewise::BigEndianConst<Type const>;
 
-            for (uint8_t byte : each_byte{value})
+            for (auto & byte : each_byte{value})
                 shift_down_unlatched(byte);
             
             latch();
         }
-        /// Shift in a struct or value, bytes in decreasing order, LSB first.
+        /// Shift in a struct or value, reverse byte order, LSB first.
         template<typename Type>
         void shift_up_little_endian(Type const & value) {
-            using each_byte = Utility::Bytewise::LittleEndianConst<Type>;
+            using each_byte = Utility::Bytewise::LittleEndianConst<Type const>;
 
-            for (uint8_t byte : each_byte{value})
+            for (auto & byte : each_byte{value})
                 shift_up_unlatched(byte);
 
             latch();
         }
-        /// Shift in a struct or value, bytes in decreasing order, MSB first.
+        /// Shift in a struct or value, reverse byte order, MSB first.
         template<typename Type>
         void shift_down_little_endian(Type const & value) {
-            using each_byte = Utility::Bytewise::LittleEndianConst<Type>;
+            using each_byte = Utility::Bytewise::LittleEndianConst<Type const>;
 
-            for (uint8_t byte : each_byte{value})
+            for (auto & byte : each_byte{value})
                 shift_down_unlatched(byte);
             
             latch();

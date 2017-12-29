@@ -28,11 +28,11 @@ bool arg_reference_test(
 }
 
 int main() {
-    int native[5] = { 1, 2, 3, 4, 5 };
-    Array<int, 5> a = { 1, 2, 3, 4, 5 };
-    Array<int, 5> b = { 1, 2, 3, 4, 5 };
-    Array<int, 5> c = { 1, 2, 3, 4, 6 };
-    Array<int, 5> d { a };
+    int native[5]{ 1, 2, 3, 4, 5 };
+    Array<int, 5> a{ 1, 2, 3, 4, 5 };
+    Array<int, 5> b{ 1, 2, 3, 4, 5 };
+    Array<int, 5> c{ 1, 2, 3, 4, 6 };
+    Array<int, 5> d{ a };
 
     // Test index operator
     assert(a[3] == 4);

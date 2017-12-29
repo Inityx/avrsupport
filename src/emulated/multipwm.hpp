@@ -8,77 +8,100 @@
 #include <portlib/digitalport.hpp>
 
 #include <utility/array.hpp>
+#include <utility/range.hpp>
+#include <utility/iterator.hpp>
 
 namespace AvrSupport::Emulated {
+    /**
+     * An emulated multichannel PWM driver with duty cycles out of 255.
+     * @tparam COUNT The number of channels
+     * @tparam STEP The amount by which the duty cycles are adjusted
+     */
     template<PortLib::PinIndex COUNT, uint8_t STEP>
     struct MultiPWM {
     private:
+        struct Channel {
+            PortLib::PinIndex pin_index;
+            uint8_t level;
+        };
+
         PortLib::DigitalPort &port;
-        Utility::Array<PortLib::PinIndex, COUNT> pins;
-        Utility::Array<uint8_t, COUNT> levels;
-        PortLib::PinIndex selection;
+        Utility::Array<Channel, COUNT> channels;
+        Channel * selection;
         uint8_t counter;
         bool active;
         
     public:
         constexpr MultiPWM(
-            Utility::Array<PortLib::PinIndex, COUNT> const &pins,
-            Utility::Array<uint8_t, COUNT> const &levels,
-            PortLib::DigitalPort &port
+            Utility::Array<PortLib::PinIndex, COUNT> const & pins,
+            Utility::Array<uint8_t,           COUNT> const & levels,
+            PortLib::DigitalPort & port
         ) :
-            pins{pins},
-            levels{levels},
             port{port},
             counter{0},
             active{true},
-            selection{0}
-        {}
-
-        void set_pins_out() {
-            for (PortLib::PinIndex i : pins)
-                port.set_out(i);
+            selection{&channels[0]}
+        {
+            for (auto i : Utility::Range::Iterable{COUNT})
+                channels[i] = Channel{pins[i], levels[i]};
         }
 
+        /// Set all pin directions to output
+        void set_pins_out() {
+            for (auto & channel : channels)
+                port.set_out(channel.pin_index);
+        }
+
+        /// Set desired duty cycle for a channel, 0 to 255
         void set_level(PortLib::PinIndex index, uint8_t value) {
-            levels[index] = value;
+            channels[index].level = value;
         }
         
+        /// Get the current duty cycle for a pin, 0 to 255
+        uint8_t get_level(PortLib::PinIndex index) {
+            return channels[index].level;
+        }
+        
+        /// Pull selected channel's pin high, other pins low
         void isolate_selected() {
-            for (uint8_t i{0}; i<COUNT; i++)
-                if (i != selection)
-                    port.set_low(pins[i]);
-
-            port.set_high(pins[selection]);
+            for (auto & channel : channels)
+                port.set_at(
+                    channel.pin_index,
+                    &channel == selection
+                );
         }
 
-        void pause() { active = false; }
-        void resume() { active = true; }
+        void pause()  { active = false; }
+        void resume() { active = true;  }
 
+        /// Advance one tick in PWM timing
         void step() {
             if (!active) return;
 
             if (counter > 0) {
                 // Set pins low if count passed level
-                for (PortLib::PinIndex i{0}; i<COUNT; i++)
-                    if (counter > levels[i])
-                        port.set_low(pins[i]);
+                for (auto & channel : channels)
+                    if (counter > channel.level)
+                        port.set_low(channel.pin_index);
             } else {
                 // Set all pins high at start
-                for (PortLib::PinIndex i{0}; i<COUNT; i++)
-                    if (levels[i] != 0)
-                        port.set_high(pins[i]);
+                for (auto & channel : channels)
+                    if (channel.level != 0)
+                        port.set_high(channel.pin_index);
             }
             
             counter++;
         }
 
+        /// Select next channel forward
         void select_next() {
-            if (selection < COUNT-1) selection++;
-            else selection = 0;
+            Utility::circular_increment_iterator(channels, selection);
         }
 
-        void adjust_up()   { levels[selection] += STEP; }
-        void adjust_down() { levels[selection] -= STEP; }
+        // Adjust selected channel's duty cycle up by `STEP`
+        void adjust_up()   { selection->level += STEP; }
+        // Adjust selected channel's duty cycle down by `STEP`
+        void adjust_down() { selection->level -= STEP; }
     };
 }
 

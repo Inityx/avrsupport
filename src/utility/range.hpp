@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include <utility/array.hpp>
+#include <utility/iterator.hpp>
 
 /// Numerical range helpers
 namespace AvrSupport::Utility::Range {
@@ -26,63 +27,37 @@ namespace AvrSupport::Utility::Range {
     }
 
     /**
-     * An iterable range; [first, last).
-     * `last` is an outer bound when `abs(step)` is not 1.
+     * An iterable numeric range, `[first, last)`.
+     * When `abs(step)` is not 1, `last` is an outer bound.
      * @tparam Type The type to yield (default uint8_t)
      */
     template <typename Type = uint8_t>
     struct Iterable {
-        /// A value-based iterator
-        struct Iter {
-            Type value, step;
+    private:
+        constexpr static Type auto_step(Type const first, Type const last) {
+            return Type(first <= last ? 1 : -1);
+        }
 
-            Type operator*() { return value; } ///< Dereference
-            operator Type()  { return value; } ///< Type coercion
-
-            bool operator==(Iter const & rhs) const {
-                if (abs(step) == 1) return value == rhs.value;
-                return abs(value - rhs.value) < abs(step);
-            }
-            bool operator!=(Iter const & rhs) const {
-                if (abs(step) == 1) return value != rhs.value;
-                return abs(value - rhs.value) >= abs(step);
-            }
-
-            Iter & operator++()                     { value += step; return *this; }
-            Iter & operator--()                     { value -= step; return *this; }
-            Iter & operator+=(Type const rhs)       { value += rhs;  return *this; }
-            Iter & operator-=(Type const rhs)       { value -= rhs;  return *this; }
-            Iter   operator++(int)                  { return Iter{ value += step }; }
-            Iter   operator--(int)                  { return Iter{ value -= step }; }
-            Iter   operator+ (Type const rhs) const { return Iter{ value + rhs }; }
-            Iter   operator- (Type const rhs) const { return Iter{ value - rhs }; }
-        };
-
+    public:
         Type first, last, step;
 
-        /**
-         * Complete constructor.
-         * Arguments may be positive or negative.
-         */
+        /// Steps from `first` to `last` by `step`.
         constexpr Iterable(Type first, Type last, Type step)
-            : first{first}, last{last}, step{step} {}
+            : first{first}, last{last}, step{step}
+        {}
 
-        /**
-         * Automatic step constructor.
-         * Step is 1 or -1 depending on argument ordering.
-         */
+        /// Steps from `first` to `last` by 1 (or -1).
         constexpr Iterable(Type first, Type last)
-            : first{first}, last{last}, step{(first <= last) ? 1 : -1} {}
+            : first{first}, last{last}, step{auto_step(first, last)}
+        {}
         
-        /**
-         * Automatic range constructor.
-         * Steps from 0 to `last` by 1 or -1.
-         */
+        /// Steps from 0 to `last` by 1 (or -1).
         constexpr Iterable(Type last)
-            : first{0}, last{last}, step{(first <= last) ? 1 : -1} {}
+            : first{0}, last{last}, step{auto_step(first, last)}
+        {}
         
-        Iter begin() { return Iter{first, step}; }
-        Iter end()   { return Iter{last,  step}; }
+        ValueIterator<Type> begin() { return ValueIterator{first, step}; }
+        ValueIterator<Type> end()   { return ValueIterator{last,  step}; }
     };
 }
 

@@ -6,14 +6,23 @@
 using Rotary = AvrSupport::Peripheral::RotaryEncoder;
 
 template<size_t COUNT>
-using Actions = std::array<std::array<int, 2>, COUNT>;
+using Actions = std::array<std::array<int, 2> const, COUNT> const;
+
+Actions<5>
+    LEFT_TURN   { 0,0, 0,1, 1,1, 1,0, 0,0 },
+    RIGHT_TURN  { 0,0, 1,0, 1,1, 0,1, 0,0 },
+    FALSE_POS   { 0,0, 0,1, 1,1, 0,1, 0,0 };
+
+Actions<9>
+    FALSE_NEG_1 { 0,0, 0,1, 1,1, 0,1, 1,1, 1,0, 1,1, 1,0, 0,0 },
+    FALSE_NEG_2 { 0,0, 0,1, 1,1, 1,0, 1,1, 0,1, 1,1, 1,0, 0,0 };
 
 template<size_t COUNT>
 void rotary_apply(
     Rotary &rotary,
     Actions<COUNT> &actions
 ) {
-    for(auto &a : actions) rotary.update(a[0], a[1]);
+    for(auto & a : actions) rotary.sample(a[0], a[1]);
 }
 
 template<typename Func>
@@ -21,110 +30,69 @@ void times_do(int count, Func func) {
     for(int i{0}; i<count; i++) func();
 }
 
-bool left_turn() {
+void left_turn() {
     Rotary rotary;
-    Actions<5> actions { 0,0, 0,1, 1,1, 1,0, 0,0 };
+    rotary_apply(rotary, LEFT_TURN);
 
-    rotary_apply(rotary, actions);
-    return (
-        rotary.turned_left() &&
-        !rotary.turned_right()
-    );
+    assert(rotary.turned_left());
+    assert(!rotary.turned_right());
 }
 
-bool right_turn() {
+void right_turn() {
     Rotary rotary;
-    Actions<5> actions { 0,0, 1,0, 1,1, 0,1, 0,0 };
+    rotary_apply(rotary, RIGHT_TURN);
 
-    rotary_apply(rotary, actions);
-    return (
-        rotary.turned_right() &&
-        !rotary.turned_left()
-    );
+    assert( rotary.turned_right());
+    assert(!rotary.turned_left());
 }
 
-bool clear() {
+void clear() {
     Rotary rotary;
+    rotary_apply(rotary, RIGHT_TURN);
+    assert(rotary.turned_right());
 
-    rotary.update(1,0);
-    bool updated = rotary.stream == 0b00'00'00'10;
     rotary.clear();
-    bool cleared = rotary.stream == 0;
-
-    return updated && cleared;
+    assert(!rotary.turned_right());
 }
 
-bool deduplicate() {
+void deduplicate() {
     Rotary rotary;
-    times_do(10, [&](){ rotary.update(0,0); });
-    times_do(11, [&](){ rotary.update(0,1); });
-    times_do(9,  [&](){ rotary.update(1,1); });
-    times_do(14, [&](){ rotary.update(1,0); });
-    times_do(10, [&](){ rotary.update(0,0); });
+    times_do(10, [&](){ rotary.sample(0,0); });
+    times_do(11, [&](){ rotary.sample(0,1); });
+    times_do(9,  [&](){ rotary.sample(1,1); });
+    times_do(14, [&](){ rotary.sample(1,0); });
+    times_do(10, [&](){ rotary.sample(0,0); });
 
-    return (
-        rotary.turned_left() &&
-        !rotary.turned_right()
-    );
+    assert( rotary.turned_left());
+    assert(!rotary.turned_right());
 }
 
-bool no_false_positive() {
+void no_false_positive() {
     Rotary rotary;
-    Actions<5> actions = {
-         0, 0,
-         0, 1,
-         1, 1,
-         0, 1,
-         0, 0
-    };
 
-    rotary_apply(rotary, actions);
-    return (
-        !rotary.turned_left() &&
-        !rotary.turned_right()
-    );
+    rotary_apply(rotary, FALSE_POS);
+    assert(!rotary.turned_left());
+    assert(!rotary.turned_right());
 }
 
-bool no_false_negative_1() {
+void no_false_negative_1() {
     Rotary rotary;
-    Actions<9> actions {
-        0,0,
-        0,1,
-        1,1,
-        0,1,
-        1,1,
-        1,0,
-        1,1,
-        1,0,
-        0,0
-    };
 
-    rotary_apply(rotary, actions);
-    return(rotary.turned_left());
+    rotary_apply(rotary, FALSE_NEG_1);
+    assert(rotary.turned_left());
 }
 
-bool no_false_negative_2() {
+void no_false_negative_2() {
     Rotary rotary;
-    Actions<9> actions = {
-        0, 0,
-        0, 1,
-        1, 1,
-        1, 0,
-        1, 1,
-        0, 1,
-        1, 1,
-        1, 0,
-        0, 0
-    };
 
-    rotary_apply(rotary, actions);
-    return(rotary.turned_left());
+    rotary_apply(rotary, FALSE_NEG_2);
+    assert(rotary.turned_left());
 }
 
 int main() {
-    assert(deduplicate());
-    assert(no_false_positive());
-    assert(no_false_negative_1());
-    assert(no_false_negative_2());
+    deduplicate();
+    no_false_positive();
+    no_false_negative_1();
+    no_false_negative_2();
 }
 

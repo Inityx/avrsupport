@@ -1,5 +1,5 @@
 #include <cassert>
-
+#include <cstdio>
 #include <emulated/multipwm.hpp>
 
 using namespace AvrSupport;
@@ -38,6 +38,12 @@ int main() {
     pwm.step();
 
     assert(PORTA == 0b000);
+
+    pwm.adjust_up();
+    assert(pwm.get_level(0) == 1);
+    pwm.select_next();
+    pwm.adjust_up();
+    assert(pwm.get_level(1) == 3);
 
     return 0;
 }
