@@ -55,7 +55,7 @@ namespace AvrSupport::PortLib {
             interrupt_flag;
         
     public:
-        constexpr Timer(
+        Timer(
             RegisterT TCNTn,
             RegisterT OCRnA,
             RegisterT OCRnB,

@@ -1,6 +1,6 @@
 #include <emulated/multipwm.hpp>
 
-#include <mapping/charmapper.hpp>
+#include <mapping/encodedwith.hpp>
 #include <mapping/sevensegment.hpp>
 
 #include <peripheral/rotaryencoder.hpp>
@@ -15,6 +15,6 @@
 #include <utility/array.hpp>
 #include <utility/bytewise.hpp>
 #include <utility/iterator.hpp>
-#include <utility/range.hpp>
+#include <utility/arithmetic.hpp>
 
 int main() {}

@@ -8,9 +8,8 @@ namespace AvrSupport::Peripheral {
     struct RotaryEncoder {
     private:
         struct QuaternaryStream {
-            uint8_t stream;
+            uint8_t stream{0};
             
-            constexpr QuaternaryStream() : stream{0} {}
             bool operator==(uint8_t const rhs) const { return stream == rhs; }
 
             void shift_in(uint8_t const state) { stream = stream<<2 | state; }

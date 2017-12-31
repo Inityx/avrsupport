@@ -9,10 +9,10 @@ namespace AvrSupport::Utility {
     /// A `std::array` replacement
     template<typename Type, array_size_t SIZE>
     struct Array {
-        using ref          = Type &;
-        using ref_const    = Type const &;
-        using iter         = Type *;
-        using iter_const   = Type const*;
+        using ref        = Type &;
+        using ref_const  = Type const &;
+        using iter       = Type *;
+        using iter_const = Type const*;
 
         Type _storage[SIZE ? SIZE : 1]; // Allow zero-sized arrays
 
@@ -28,7 +28,7 @@ namespace AvrSupport::Utility {
         constexpr ref       operator[](array_size_t const i)       { return _storage[i]; }
         constexpr ref_const operator[](array_size_t const i) const { return _storage[i]; }
 
-        constexpr bool operator==(Array<Type, SIZE> const & rhs) {
+        constexpr bool operator==(Array<Type, SIZE> const & rhs) const {
             for (
                 auto
                     curr_this =     begin(),
@@ -43,7 +43,7 @@ namespace AvrSupport::Utility {
 
             return true;
         }
-        constexpr bool operator!=(Array<Type, SIZE> const & rhs) {
+        constexpr bool operator!=(Array<Type, SIZE> const & rhs) const {
             return !(operator==(rhs));
         }
     };

@@ -8,7 +8,6 @@
 #include <portlib/digitalport.hpp>
 
 #include <utility/array.hpp>
-#include <utility/range.hpp>
 #include <utility/iterator.hpp>
 
 namespace AvrSupport::Emulated {
@@ -27,22 +26,19 @@ namespace AvrSupport::Emulated {
 
         PortLib::DigitalPort &port;
         Utility::Array<Channel, COUNT> channels;
-        Channel * selection;
-        uint8_t counter;
-        bool active;
+        Channel * selection{&channels[0]};
+        uint8_t counter{0};
+        bool active{true};
         
     public:
-        constexpr MultiPWM(
+        MultiPWM( // Can't be constexpr because port is non-const
             Utility::Array<PortLib::PinIndex, COUNT> const & pins,
             Utility::Array<uint8_t,           COUNT> const & levels,
             PortLib::DigitalPort & port
         ) :
-            port{port},
-            counter{0},
-            active{true},
-            selection{&channels[0]}
+            port{port}
         {
-            for (auto i : Utility::Range::Iterable{COUNT})
+            for (auto i : Utility::Range{COUNT})
                 channels[i] = Channel{pins[i], levels[i]};
         }
 
@@ -58,7 +54,7 @@ namespace AvrSupport::Emulated {
         }
         
         /// Get the current duty cycle for a pin, 0 to 255
-        uint8_t get_level(PortLib::PinIndex index) {
+        uint8_t get_level(PortLib::PinIndex index) const {
             return channels[index].level;
         }
         
@@ -95,7 +91,7 @@ namespace AvrSupport::Emulated {
 
         /// Select next channel forward
         void select_next() {
-            Utility::circular_increment_iterator(channels, selection);
+            Utility::Arithmetic::circular_increment_iterator(channels, selection);
         }
 
         // Adjust selected channel's duty cycle up by `STEP`

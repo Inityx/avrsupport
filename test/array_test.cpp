@@ -6,7 +6,7 @@
 using AvrSupport::Utility::Array;
 
 template<typename T, AvrSupport::Utility::array_size_t COUNT>
-bool arg_value_test(
+constexpr bool arg_value_test(
     Array<T, COUNT> const custom,
     T const * native
 ) {
@@ -17,7 +17,7 @@ bool arg_value_test(
 }
 
 template<typename T, AvrSupport::Utility::array_size_t COUNT>
-bool arg_reference_test(
+constexpr bool arg_reference_test(
     Array<T, COUNT> const & custom,
     T const * native
 ) {
@@ -28,30 +28,17 @@ bool arg_reference_test(
 }
 
 int main() {
-    int native[5]{ 1, 2, 3, 4, 5 };
-    Array<int, 5> a{ 1, 2, 3, 4, 5 };
-    Array<int, 5> b{ 1, 2, 3, 4, 5 };
-    Array<int, 5> c{ 1, 2, 3, 4, 6 };
-    Array<int, 5> d{ a };
+    constexpr int native[5]{ 1, 2, 3, 4, 5 };
+    constexpr Array<int, 5> a{ 1, 2, 3, 4, 5 };
+    constexpr Array<int, 5> b{ 1, 2, 3, 4, 5 };
+    constexpr Array<int, 5> c{ 1, 2, 3, 4, 6 };
+    constexpr Array<int, 5> d{ a };
 
-    // Test index operator
-    assert(a[3] == 4);
+    static_assert(a[3] == 4);
+    static_assert(a == b);
+    static_assert(a != c);
+    static_assert(a == d);
 
-    // Test equality operator
-    assert(a == b);
-    assert(a != c);
-    
-    // Test copy constructor
-    assert(a == d);
-
-    // Test iteration
-    uint8_t i{1};
-    for(auto elem : a) {
-        assert(elem == i);
-        i++;
-    }
-
-    // Test argument passing
-    assert(arg_value_test(a, native));
-    assert(arg_reference_test(a, native));
+    static_assert(arg_value_test(a, native));
+    static_assert(arg_reference_test(a, native));
 }

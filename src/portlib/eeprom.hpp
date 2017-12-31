@@ -33,7 +33,7 @@ namespace AvrSupport::PortLib {
         RegisterE address;
 
     public:
-        constexpr Eeprom(
+        Eeprom(
             Register8 eedr,
             Register8 eecr,
             RegisterE eear
@@ -75,7 +75,7 @@ namespace AvrSupport::PortLib {
         using BaseEeprom = Eeprom<EEPROM_SIZE>;
 
     public:
-        constexpr BufferEeprom(
+        BufferEeprom(
             Register8 eedr,
             Register8 eecr,
             RegisterE eear
@@ -167,14 +167,14 @@ namespace AvrSupport::PortLib {
             bool active; 
             ValueType value;
 
-            static eeprom_size_t constexpr VALUE_OFFSET{
+            constexpr static eeprom_size_t const VALUE_OFFSET{
                 reinterpret_cast<eeprom_size_t const>(
                     &(static_cast<Storage *>(0)->value)
                 )
             };
         };
 
-        eeprom_size_t location;
+        eeprom_size_t location{0};
 
         void move_to_active() {
             // Increment location until active found
@@ -200,8 +200,7 @@ namespace AvrSupport::PortLib {
             Register8 eecr,
             RegisterE eear
         ) :
-            BaseBufferEeprom{eedr, eecr, eear},
-            location{0}
+            BaseBufferEeprom{eedr, eecr, eear}
         {
             move_to_active();
         }

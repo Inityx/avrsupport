@@ -12,7 +12,7 @@ namespace AvrSupport::PortLib {
         uint8_t bitmask;
 
     public:
-        constexpr DigitalPin(
+        DigitalPin(
             DigitalPort &port,
             PinIndex const index
         ) :

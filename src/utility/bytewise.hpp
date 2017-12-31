@@ -26,6 +26,8 @@ namespace AvrSupport::Utility::Bytewise {
         SourceType & target;
 
         constexpr BigEndian(SourceType & target) : target{target} {}
+
+        // constexpr functions cannot have reinterpret_cast
         Iter begin() const { return Iter{reinterpret_cast<ByteType *>(&target    )}; }
         Iter end()   const { return Iter{reinterpret_cast<ByteType *>(&target + 1)}; }
     };
@@ -45,19 +47,21 @@ namespace AvrSupport::Utility::Bytewise {
 
         /** A little endian (backwards) bytewise iterator. */
         struct Iter : public Utility::Iterator<ByteType> {
-            Iter & operator++()                       { this->address--;      return *this; }
-            Iter & operator--()                       { this->address++;      return *this; }
-            Iter & operator+=(size_t const rhs)       { this->address -= rhs; return *this; }
-            Iter & operator-=(size_t const rhs)       { this->address += rhs; return *this; }
-            Iter   operator++(int)                    { return Iter{ this->address-- }; }
-            Iter   operator--(int)                    { return Iter{ this->address++ }; }
-            Iter   operator+ (size_t const rhs) const { return Iter{ this->address - rhs }; }
-            Iter   operator- (size_t const rhs) const { return Iter{ this->address + rhs }; }
+            constexpr Iter & operator++()                       { this->address--;      return *this; }
+            constexpr Iter & operator--()                       { this->address++;      return *this; }
+            constexpr Iter & operator+=(size_t const rhs)       { this->address -= rhs; return *this; }
+            constexpr Iter & operator-=(size_t const rhs)       { this->address += rhs; return *this; }
+            constexpr Iter   operator++(int)                    { return Iter{ this->address-- }; }
+            constexpr Iter   operator--(int)                    { return Iter{ this->address++ }; }
+            constexpr Iter   operator+ (size_t const rhs) const { return Iter{ this->address - rhs }; }
+            constexpr Iter   operator- (size_t const rhs) const { return Iter{ this->address + rhs }; }
         };
 
         SourceType & target;
 
         constexpr LittleEndian(SourceType & target) : target{target} {}
+
+        // constexpr functions cannot have reinterpret_cast
         Iter begin() const { return Iter{reinterpret_cast<ByteType *>(&target + 1) - 1}; }
         Iter end()   const { return Iter{reinterpret_cast<ByteType *>(&target    ) - 1}; }
     };

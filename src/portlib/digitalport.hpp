@@ -10,7 +10,7 @@ namespace AvrSupport::PortLib {
     struct DigitalPort {
         Register8 pinx, portx, ddrx;
 
-        constexpr DigitalPort(
+        DigitalPort(
             Register8 pinx,
             Register8 portx,
             Register8 ddrx
