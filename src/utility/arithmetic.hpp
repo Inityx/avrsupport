@@ -5,7 +5,7 @@
 
 #include <utility/array.hpp>
 
-/// Numerical arithmetic helpers
+/// %Arithmetic helpers
 namespace AvrSupport::Utility::Arithmetic {
     /// Inclusive range check
     template<typename Type>
@@ -25,7 +25,7 @@ namespace AvrSupport::Utility::Arithmetic {
         );
     }
 
-    /// Unambiguous non-coercive 1-dimensional distance
+    /// Unambiguous non-coercive absolute difference (1-dimensional distance)
     template<typename Type>
     constexpr Type abs_diff(Type const & a, Type const & b) {
         return a >= b ? a - b : b - a;

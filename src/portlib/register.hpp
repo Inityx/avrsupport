@@ -1,5 +1,5 @@
-#ifndef PORTLIB_H
-#define PORTLIB_H
+#ifndef AVRSUPPORT_PORTLIB_REGISTER_H
+#define AVRSUPPORT_PORTLIB_REGISTER_H
 
 #include <stdint.h>
 

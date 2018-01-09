@@ -1,7 +1,8 @@
-#ifndef SEVENSEGMENT_H
-#define SEVENSEGMENT_H
+#ifndef AVRSUPPORT_MAPPING_SEVENSEGMENT_H
+#define AVRSUPPORT_MAPPING_SEVENSEGMENT_H
 
 #include <stddef.h>
+#include <stdint.h>
 
 #include <utility/array.hpp>
 #include <utility/arithmetic.hpp>

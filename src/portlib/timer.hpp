@@ -1,5 +1,5 @@
-#ifndef TIMER_H
-#define TIMER_H
+#ifndef AVRSUPPORT_PORTLIB_TIMER_H
+#define AVRSUPPORT_PORTLIB_TIMER_H
 
 #include <stdint.h>
 #include <portlib/register.hpp>
@@ -12,6 +12,7 @@ namespace AvrSupport::PortLib {
     template<typename TimerSize>
     struct Timer {
         using RegisterT = Register<TimerSize>;
+        using SelfClass = Timer<TimerSize>;
 
         /// %Timer prescale type
         enum struct Prescale : uint8_t {
@@ -34,7 +35,7 @@ namespace AvrSupport::PortLib {
         };
 
         /// Interrupt trigger selection
-        enum struct Trigger {
+        enum struct Trigger : uint8_t {
             overflow  = 0b0000'0001,
             compare_a = 0b0000'0010,
             compare_b = 0b0000'0100
@@ -73,22 +74,26 @@ namespace AvrSupport::PortLib {
             interrupt_flag {TIFRn}
         {}
 
-        void set_timer_length(TimerSize duration) {
+        SelfClass & set_timer_length(TimerSize duration) {
             compare_a = duration;
+            return *this;
         }
 
-        void set_prescale(Prescale scale) {
+        SelfClass & set_prescale(Prescale scale) {
             config_b &= PRESCALE_BITMASK;
             config_b |= static_cast<uint8_t>(scale);
+            return *this;
         }
 
-        void set_mode(Mode mode) {
+        SelfClass & set_mode(Mode mode) {
             config_a &= MODE_BITMASK;
             config_a |= static_cast<uint8_t>(mode);
+            return *this;
         }
         
-        void enable_interrupt(Trigger trigger) {
+        SelfClass & enable_interrupt(Trigger trigger) {
             interrupt_mask = static_cast<uint8_t>(trigger);
+            return *this;
         }
     };
 }

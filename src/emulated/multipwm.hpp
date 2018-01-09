@@ -1,5 +1,5 @@
-#ifndef MULTIPWM_H
-#define MULTIPWM_H
+#ifndef AVRSUPPORT_EMULATED_MULTIPWM_H
+#define AVRSUPPORT_EMULATED_MULTIPWM_H
 
 #include <stdint.h>
 #include <stddef.h>

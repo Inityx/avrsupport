@@ -12,9 +12,15 @@
 #include <portlib/register.hpp>
 #include <portlib/timer.hpp>
 
+#include <usi/base.hpp>
+#include <usi/spi.hpp>
+#include <usi/twi.hpp>
+#include <usi/uart.hpp>
+
+#include <utility/arithmetic.hpp>
 #include <utility/array.hpp>
 #include <utility/bytewise.hpp>
+#include <utility/cstring.hpp>
 #include <utility/iterator.hpp>
-#include <utility/arithmetic.hpp>
 
 int main() {}

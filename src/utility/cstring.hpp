@@ -3,7 +3,7 @@
 
 #include <stddef.h>
 
-/// Utilities for working with C strings, mostly for constexpr correctness
+/// C String helpers
 namespace AvrSupport::Utility::CString {
     // Max length must be defined for to prevent compile-time infinite loops
     // Who would ever even want a string this long on an AVR chip

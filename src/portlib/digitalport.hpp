@@ -1,5 +1,5 @@
-#ifndef DIGITALPORT_H
-#define DIGITALPORT_H
+#ifndef AVRSUPPORT_PORTLIB_DIGITALPORT_H
+#define AVRSUPPORT_PORTLIB_DIGITALPORT_H
 
 #include <portlib/register.hpp>
 
@@ -23,18 +23,19 @@ namespace AvrSupport::PortLib {
         uint8_t get() const { return pinx; }
         bool get(PinIndex const index) { return pinx & (1<<index); }
 
-        void set_out() { ddrx = 0xFF; }
-        void set_in()  { ddrx = 0x00; }
-        void set(uint8_t states) { portx = states; }
+        DigitalPort & set_out() { ddrx = 0xFF; return *this; }
+        DigitalPort & set_in()  { ddrx = 0x00; return *this; }
+        DigitalPort & set(uint8_t states) { portx = states; return *this; }
 
-        void set_out (PinIndex const index) { ddrx  |=  (1<<index); }
-        void set_in  (PinIndex const index) { ddrx  &= ~(1<<index); }
-        void set_high(PinIndex const index) { portx |=  (1<<index); }
-        void set_low (PinIndex const index) { portx &= ~(1<<index); }
-        void toggle  (PinIndex const index) { portx ^=  (1<<index); }
+        DigitalPort & set_out (PinIndex const index) { ddrx  |=  (1<<index); return *this; }
+        DigitalPort & set_in  (PinIndex const index) { ddrx  &= ~(1<<index); return *this; }
+        DigitalPort & set_high(PinIndex const index) { portx |=  (1<<index); return *this; }
+        DigitalPort & set_low (PinIndex const index) { portx &= ~(1<<index); return *this; }
+        DigitalPort & toggle  (PinIndex const index) { portx ^=  (1<<index); return *this; }
 
-        void set_at(PinIndex const index, bool state) {
+        DigitalPort & set_at(PinIndex const index, bool state) {
             state ? set_high(index) : set_low(index);
+            return *this;
         }
     };
 }

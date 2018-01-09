@@ -1,5 +1,5 @@
-#ifndef DIGITALPIN_H
-#define DIGITALPIN_H
+#ifndef AVRSUPPORT_PORTLIB_DIGITALPIN_H
+#define AVRSUPPORT_PORTLIB_DIGITALPIN_H
 
 #include <portlib/register.hpp>
 #include <portlib/digitalport.hpp>
@@ -9,7 +9,7 @@ namespace AvrSupport::PortLib {
     struct DigitalPin {
     protected:
         DigitalPort &port;
-        uint8_t bitmask;
+        uint8_t const bitmask;
 
     public:
         DigitalPin(
@@ -22,15 +22,16 @@ namespace AvrSupport::PortLib {
 
         bool get() const { return (port.pinx & bitmask) != 0; }
 
-        void set_out()  { port.ddrx  |=  bitmask; }
-        void set_in()   { port.ddrx  &= ~bitmask; }
-        void set_high() { port.portx |=  bitmask; }
-        void set_low()  { port.portx &= ~bitmask; }
-        void toggle()   { port.portx ^=  bitmask; }
+        DigitalPin & set_out()  { port.ddrx  |=  bitmask; return *this; }
+        DigitalPin & set_in()   { port.ddrx  &= ~bitmask; return *this; }
+        DigitalPin & set_high() { port.portx |=  bitmask; return *this; }
+        DigitalPin & set_low()  { port.portx &= ~bitmask; return *this; }
+        DigitalPin & toggle()   { port.portx ^=  bitmask; return *this; }
 
-        void set(bool state) {
+        DigitalPin & set(bool state) {
             if (state) set_high();
             else       set_low ();
+            return *this;
         }
     };
 }

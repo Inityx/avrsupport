@@ -1,5 +1,5 @@
-#ifndef ENCODED_WITH_H
-#define ENCODED_WITH_H
+#ifndef AVRSUPPORT_MAPPING_ENCODEDWITH_H
+#define AVRSUPPORT_MAPPING_ENCODEDWITH_H
 
 #include <assert.h>
 #include <utility/iterator.hpp>

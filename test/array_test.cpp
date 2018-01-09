@@ -2,10 +2,11 @@
 
 #include <cassert>
 #include <cstdint>
+#include <cstddef>
 
 using AvrSupport::Utility::Array;
 
-template<typename T, AvrSupport::Utility::array_size_t COUNT>
+template<typename T, size_t COUNT>
 constexpr bool arg_value_test(
     Array<T, COUNT> const custom,
     T const * native
@@ -16,7 +17,7 @@ constexpr bool arg_value_test(
     return true;
 }
 
-template<typename T, AvrSupport::Utility::array_size_t COUNT>
+template<typename T, size_t COUNT>
 constexpr bool arg_reference_test(
     Array<T, COUNT> const & custom,
     T const * native

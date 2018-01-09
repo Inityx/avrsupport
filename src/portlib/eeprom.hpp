@@ -1,5 +1,5 @@
-#ifndef EEPROM_ASYNC_H
-#define EEPROM_ASYNC_H
+#ifndef AVRSUPPORT_PORTLIB_EEPROM_H
+#define AVRSUPPORT_PORTLIB_EEPROM_H
 
 #include <stdint.h>
 #include <stddef.h>
@@ -90,7 +90,7 @@ namespace AvrSupport::PortLib {
          */
         template<typename ReadType>
         void sync_read(eeprom_size_t location, ReadType & dest) {
-            using EachByte = Utility::Bytewise::BigEndian<ReadType>;
+            using EachByte = Utility::Bytewise<ReadType, Utility::Endian::big>;
 
             while (BaseEeprom::is_writing());
 
@@ -103,7 +103,7 @@ namespace AvrSupport::PortLib {
         /// Write struct or primitive synchronously.
         template<typename WriteType>
         void sync_write(eeprom_size_t location, WriteType const & source) {
-            using EachByteConst = Utility::Bytewise::BigEndianConst<WriteType const>;
+            using EachByteConst = Utility::BytewiseConst<WriteType const, Utility::Endian::big>;
 
             for (uint8_t const & byte : EachByteConst{source}) {
                 while (BaseEeprom::is_writing());

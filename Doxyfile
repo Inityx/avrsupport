@@ -26,6 +26,8 @@ OUTPUT_DIRECTORY       = ./docs/build
 # Build related configuration options
 #---------------------------------------------------------------------------
 
+LAYOUT_FILE            = ./docs/src/DoxygenLayout.xml
+
 LOOKUP_CACHE_SIZE      = 0 # 2^(16+value) symbols. Doxygen recommends after run.
 
 ALWAYS_DETAILED_SEC    = NO
@@ -43,18 +45,13 @@ ABBREVIATE_BRIEF       = "The $name class" \
                          an \
                          the
 
-# The MULTILINE_CPP_IS_BRIEF tag can be set to YES to make doxygen treat a
-# multi-line C++ special comment block (i.e. a block of //! or /// comments) as
-# a brief description. This used to be the default behavior. The new default is
-# to treat a multi-line C++ comment block as a detailed description. Set this
-# tag to YES if you prefer the old behavior instead.
-# The default value is: NO.
-
 MULTILINE_CPP_IS_BRIEF = YES
 
 INHERIT_DOCS           = YES
 INLINE_INHERITED_MEMB  = YES
 INLINE_SIMPLE_STRUCTS  = YES
+EXTRACT_ALL            = NO # Extracts undoc'd members
+EXTRACT_PACKAGE        = YES
 EXTRACT_STATIC         = YES
 EXTRACT_PRIVATE        = NO
 
@@ -76,18 +73,6 @@ SHOW_INCLUDE_FILES     = YES
 
 SHOW_USED_FILES        = NO
 
-# The LAYOUT_FILE tag can be used to specify a layout file which will be parsed
-# by doxygen. The layout file controls the global structure of the generated
-# output files in an output format independent way. To create the layout file
-# that represents doxygen's defaults, run doxygen with the -l option. You can
-# optionally specify a file name after the option, if omitted DoxygenLayout.xml
-# will be used as the name of the layout file.
-#
-# Note that if you run doxygen from a directory containing a file called
-# DoxygenLayout.xml, doxygen will parse it automatically even if the LAYOUT_FILE
-# tag is left empty.
-
-LAYOUT_FILE            =
 
 #---------------------------------------------------------------------------
 # Configuration options related to warning and progress messages
@@ -95,7 +80,7 @@ LAYOUT_FILE            =
 
 QUIET                  = NO
 WARNINGS               = YES
-WARN_IF_UNDOCUMENTED   = YES
+WARN_IF_UNDOCUMENTED   = NO
 WARN_IF_DOC_ERROR      = YES
 WARN_NO_PARAMDOC       = NO
 WARN_AS_ERROR          = NO
@@ -115,7 +100,7 @@ EXCLUDE                =
 EXCLUDE_PATTERNS       =
 EXCLUDE_SYMLINKS       = NO
 
-EXCLUDE_SYMBOLS        = # e.g. ANamespace::*Test
+EXCLUDE_SYMBOLS        = _*
 
 EXAMPLE_PATH           =
 EXAMPLE_PATTERNS       = *
@@ -164,8 +149,8 @@ IGNORE_PREFIX          =
 GENERATE_HTML          = YES
 HTML_HEADER            = docs/src/header.html
 HTML_FOOTER            = docs/src/footer.html
-HTML_STYLESHEET        =
-HTML_EXTRA_STYLESHEET  = docs/src/style.css
+HTML_STYLESHEET        = docs/src/style.css
+HTML_EXTRA_STYLESHEET  =
 HTML_EXTRA_FILES       =
 
 HTML_COLORSTYLE_HUE    = 220 # (0,  359, 220)
@@ -186,17 +171,9 @@ HTML_INDEX_NUM_ENTRIES = 0   # All trees fully expanded initially
 # The default value is: NO.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-DISABLE_INDEX          = NO
+DISABLE_INDEX          = YES
 
-# The ENUM_VALUES_PER_LINE tag can be used to set the number of enum values that
-# doxygen will group on one line in the generated HTML documentation.
-#
-# Note that a value of 0 will completely suppress the enum values from appearing
-# in the overview section.
-# Minimum value: 0, maximum value: 20, default value: 4.
-# This tag requires that the tag GENERATE_HTML is set to YES.
-
-ENUM_VALUES_PER_LINE   = 4
+ENUM_VALUES_PER_LINE   = 0
 
 USE_MATHJAX            = NO
 MATHJAX_FORMAT         = SVG

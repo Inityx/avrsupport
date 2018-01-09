@@ -1,32 +1,25 @@
 #ifndef ARRAY_H
 #define ARRAY_H
 
-#include <stdint.h>
+#include <stddef.h>
 
 namespace AvrSupport::Utility {
-    using array_size_t = uint16_t;
-
     /// A `std::array` replacement
-    template<typename Type, array_size_t SIZE>
+    template<typename Type, size_t SIZE>
     struct Array {
-        using ref        = Type &;
-        using ref_const  = Type const &;
-        using iter       = Type *;
-        using iter_const = Type const*;
-
         Type _storage[SIZE ? SIZE : 1]; // Allow zero-sized arrays
 
-        constexpr iter       begin()       { return &_storage[0]; }
-        constexpr iter_const begin() const { return &_storage[0]; }
-        constexpr iter       end()         { return &_storage[SIZE]; }
-        constexpr iter_const end()   const { return &_storage[SIZE]; }
+        constexpr Type       * begin()       { return &_storage[0]; }
+        constexpr Type const * begin() const { return &_storage[0]; }
+        constexpr Type       * end()         { return &_storage[SIZE]; }
+        constexpr Type const * end()   const { return &_storage[SIZE]; }
         
-        constexpr array_size_t size()     const { return SIZE; }
-        constexpr array_size_t max_size() const { return SIZE; }
-        constexpr bool         empty()    const { return SIZE == 0; }
+        constexpr size_t size()     const { return SIZE; }
+        constexpr size_t max_size() const { return SIZE; }
+        constexpr bool   empty()    const { return SIZE == 0; }
         
-        constexpr ref       operator[](array_size_t const i)       { return _storage[i]; }
-        constexpr ref_const operator[](array_size_t const i) const { return _storage[i]; }
+        constexpr Type       & operator[](size_t const i)       { return _storage[i]; }
+        constexpr Type const & operator[](size_t const i) const { return _storage[i]; }
 
         constexpr bool operator==(Array<Type, SIZE> const & rhs) const {
             for (
