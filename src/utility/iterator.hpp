@@ -7,75 +7,93 @@
 namespace AvrSupport::Utility {
     // TODO: Unit test
 
-    /// A pointer-based iterator type.
-    template<typename Type>
-    struct Iterator {
-        using SelfClass = Iterator<Type>;
-
-    protected:
-        Type * address;
+    /** A base iterator.
+     * @tparam StateType The type of state to hold
+     * @tparam SelfClass The derived class type
+     */
+    template<typename StateType, typename SelfClass>
+    struct BaseIterator {
+    protected: 
+        StateType state;
+        constexpr SelfClass * derived_this() {
+            return static_cast<SelfClass *>(this);
+        }
 
     public:
-        constexpr Iterator(Type * const target) : address(target) {}
+        constexpr BaseIterator(StateType state) : state{state} {}
 
-        constexpr Type & operator* () const { return *address; } ///< Dereference
-        constexpr operator Type*()    const { return  address; } ///< Pointer coercion
-        constexpr bool operator==(SelfClass const & rhs) const { return address == rhs.address; }
-        constexpr bool operator!=(SelfClass const & rhs) const { return address != rhs.address; }
-        
-        constexpr SelfClass & operator++()                       { address++;      return *this; }
-        constexpr SelfClass & operator--()                       { address--;      return *this; }
-        constexpr SelfClass & operator+=(size_t const rhs)       { address += rhs; return *this; }
-        constexpr SelfClass & operator-=(size_t const rhs)       { address -= rhs; return *this; }
-        constexpr SelfClass   operator++(int)                    { return SelfClass{ address++ }; }
-        constexpr SelfClass   operator--(int)                    { return SelfClass{ address-- }; }
-        constexpr SelfClass   operator+ (size_t const rhs) const { return SelfClass{ address + rhs }; }
-        constexpr SelfClass   operator- (size_t const rhs) const { return SelfClass{ address - rhs }; }
+        constexpr bool operator==(SelfClass const & rhs) const { return state == rhs.state; }
+        constexpr bool operator!=(SelfClass const & rhs) const { return state != rhs.state; }
+
+        constexpr SelfClass & operator++() { state++; return *derived_this(); }
+        constexpr SelfClass & operator--() { state--; return *derived_this(); }
+        constexpr SelfClass   operator++(int) { return SelfClass{ state++ }; }
+        constexpr SelfClass   operator--(int) { return SelfClass{ state-- }; }
     };
 
-    /**
-     * A value-based iterator type.
+    /** A base pointer-based iterator.
+     * @tparam Type The type yielded on dereference
+     * @tparam SelfClass The derived class type
+     */
+    template<typename Type, typename SelfClass>
+    struct BasePointerIterator : public BaseIterator<Type *, SelfClass> {
+        constexpr BasePointerIterator(Type * pointer) : BaseIterator<Type *, SelfClass>{pointer} {}
+
+        constexpr Type & operator* () const { return *this->state; } ///< Dereference
+        constexpr operator Type*()    const { return  this->state; } ///< Pointer coercion
+        
+        constexpr SelfClass & operator+=(size_t const rhs)       { this->state += rhs; return *this; }
+        constexpr SelfClass & operator-=(size_t const rhs)       { this->state -= rhs; return *this; }
+        constexpr SelfClass   operator+ (size_t const rhs) const { return SelfClass{ this->state + rhs }; }
+        constexpr SelfClass   operator- (size_t const rhs) const { return SelfClass{ this->state - rhs }; }
+    };
+
+    /** A pointer-based iterator.
+     * @tparam Type The type yielded on dereference
+     */
+    template<typename Type>
+    struct PointerIterator : public BasePointerIterator<Type, PointerIterator<Type>> {
+        constexpr PointerIterator(Type * const target) : BasePointerIterator<Type, PointerIterator<Type>>{target} {}
+    };
+
+    /** A value-based iterator.
      * @tparam Type The integral type to iterate with
      * @tparam STEP The amount to increment by
      */
     template <typename Type, auto STEP = 1>
-    struct ValueIterator {
+    struct ValueIterator : public BaseIterator<Type, ValueIterator<Type, STEP>> {
         using SelfClass = ValueIterator<Type, STEP>;
 
-    protected:
-        Type value;
-
     public:
-        constexpr ValueIterator(Type const & value) : value{value} {}
+        constexpr ValueIterator(Type const & value) : BaseIterator<Type, SelfClass>{value} {}
 
-        constexpr Type operator*() const { return value; } ///< Dereference
-        constexpr operator Type()  const { return value; } ///< Type coercion
+        constexpr Type operator*() const { return this->state; } ///< Dereference
+        constexpr operator Type()  const { return this->state; } ///< Type coercion
 
         constexpr bool operator==(SelfClass const & rhs) const {
             if constexpr (abs(STEP) == 1)
-                return value == rhs.value;
+                return this->state == rhs.state;
             else
-                return Arithmetic::abs_diff(value, rhs.value) < abs(STEP);
+                return Arithmetic::abs_diff(this->state, rhs.state) < abs(STEP);
         }
         constexpr bool operator!=(SelfClass const & rhs) const {
             if constexpr (abs(STEP) == 1)
-                return value != rhs.value;
+                return this->state != rhs.state;
             else
-                return Arithmetic::abs_diff(value, rhs.value) >= abs(STEP);
+                return Arithmetic::abs_diff(this->state, rhs.state) >= abs(STEP);
         }
 
-        constexpr SelfClass & operator++()                     { value += STEP; return *this; }
-        constexpr SelfClass & operator--()                     { value -= STEP; return *this; }
-        constexpr SelfClass & operator+=(Type const rhs)       { value += rhs * STEP;  return *this; }
-        constexpr SelfClass & operator-=(Type const rhs)       { value -= rhs * STEP;  return *this; }
-        constexpr SelfClass   operator++(int)                  { return SelfClass{ value += STEP }; }
-        constexpr SelfClass   operator--(int)                  { return SelfClass{ value -= STEP }; }
-        constexpr SelfClass   operator+ (Type const rhs) const { return SelfClass{ value + (rhs * STEP) }; }
-        constexpr SelfClass   operator- (Type const rhs) const { return SelfClass{ value - (rhs * STEP) }; }
+        constexpr SelfClass & operator++()                     { this->state += STEP; return *this; }
+        constexpr SelfClass & operator--()                     { this->state -= STEP; return *this; }
+        constexpr SelfClass & operator+=(Type const rhs)       { this->state += rhs * STEP;  return *this; }
+        constexpr SelfClass & operator-=(Type const rhs)       { this->state -= rhs * STEP;  return *this; }
+        constexpr SelfClass   operator++(int)                  { return SelfClass{ this->state += STEP }; }
+        constexpr SelfClass   operator--(int)                  { return SelfClass{ this->state -= STEP }; }
+        constexpr SelfClass   operator+ (Type const rhs) const { return SelfClass{ this->state + (rhs * STEP) }; }
+        constexpr SelfClass   operator- (Type const rhs) const { return SelfClass{ this->state - (rhs * STEP) }; }
     };
 
-    /**
-     * An iterable numeric range, `[first, last)`.
+    /** An iterable numeric range, `[first, last)`.
      * When `abs(step)` is not 1, `last` is an outer bound.
      * @tparam Type The type to yield
      * @tparam STEP The step size (negative for backwards iteration)

@@ -19,10 +19,10 @@ namespace AvrSupport::Mapping {
         using Encoding = typename Map::Encoding;
 
         /// A C string iterator that maps encodings on dereference.
-        struct Iter : public Utility::Iterator<InputType> {
+        struct Iter : public Utility::BasePointerIterator<InputType, Iter> {
             /// Dereference
             Encoding constexpr operator* () const {
-                return Map::ascii(*address);
+                return Map::ascii(*(this->state));
             }
         };
 

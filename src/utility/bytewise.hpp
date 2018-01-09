@@ -10,11 +10,8 @@
 namespace AvrSupport::Utility {
     enum struct Endian : uint8_t { big, little };
 
-    /**
-     * A bytewise iterator adapter.
-     * 
+    /** A bytewise iterator adapter.
      * This adapter yields an iterator over each byte of a struct or primitive.
-     * 
      * @tparam SourceType The datatype to be iterated over
      * @tparam ENDIAN     The endianness of the iterator
      * @tparam ByteType   The type of byte to yield (e.g. uint8_t const)
@@ -32,17 +29,17 @@ namespace AvrSupport::Utility {
         SourceType & target;
 
     public:
-        struct Iter : public Utility::Iterator<ByteType> {
+        struct Iter : public Utility::BasePointerIterator<ByteType, Iter> {
             constexpr static ptrdiff_t const INCREMENT{FORWARDS ? 1 : -1};
 
-            constexpr Iter & operator++()                       { this->address += INCREMENT      ; return *this; }
-            constexpr Iter & operator--()                       { this->address -= INCREMENT      ; return *this; }
-            constexpr Iter & operator+=(size_t const rhs)       { this->address += INCREMENT * rhs; return *this; }
-            constexpr Iter & operator-=(size_t const rhs)       { this->address -= INCREMENT * rhs; return *this; }
-            constexpr Iter   operator++(int)                    { return Iter{ this->address += INCREMENT       }; }
-            constexpr Iter   operator--(int)                    { return Iter{ this->address -= INCREMENT       }; }
-            constexpr Iter   operator+ (size_t const rhs) const { return Iter{ this->address +  INCREMENT * rhs }; }
-            constexpr Iter   operator- (size_t const rhs) const { return Iter{ this->address -  INCREMENT * rhs }; }
+            constexpr Iter & operator++()                       { this->state += INCREMENT      ; return *this; }
+            constexpr Iter & operator--()                       { this->state -= INCREMENT      ; return *this; }
+            constexpr Iter & operator+=(size_t const rhs)       { this->state += INCREMENT * rhs; return *this; }
+            constexpr Iter & operator-=(size_t const rhs)       { this->state -= INCREMENT * rhs; return *this; }
+            constexpr Iter   operator++(int)                    { return Iter{ this->state += INCREMENT       }; }
+            constexpr Iter   operator--(int)                    { return Iter{ this->state -= INCREMENT       }; }
+            constexpr Iter   operator+ (size_t const rhs) const { return Iter{ this->state +  INCREMENT * rhs }; }
+            constexpr Iter   operator- (size_t const rhs) const { return Iter{ this->state -  INCREMENT * rhs }; }
         };
 
         constexpr Bytewise(SourceType & target) : target{target} {}

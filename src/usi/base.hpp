@@ -4,14 +4,13 @@
 #include <portlib/register.hpp>
 
 namespace AvrSupport::Usi {
-    /**
-     * Abstract base Universal %Serial Interface (USI) driver.
-     * 
+    /** A base Universal %Serial Interface (USI) driver.
      * This class is used to implement other serial interfaces.
-     * @tparam SelfClass The derived class [(CRTP)](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern)
+     * @tparam SelfClass The derived class ([CRTP](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern))
      */
     template<typename SelfClass>
     struct Base {
+    private:
         enum struct ControlMask : uint8_t {
             start_cond_int = 0b10'00'00'00, ///< Start condition interrupt enable
             overflow_int   = 0b01'00'00'00, ///< Counter overflow interrupt enable
@@ -21,21 +20,7 @@ namespace AvrSupport::Usi {
             toggle_clock   = 0b00'00'00'01, ///< Toggle clock port pin
         };
 
-        enum struct ClockSource : uint8_t {
-            none_software  = 0b00'00'00'00, ///< None or software strobe
-            compare_match  = 0b00'00'01'00, ///< Timer/Counter0 compare match
-            positive_edge  = 0b00'00'10'00, ///< Positive edge
-            negavive_edge  = 0b00'00'11'00, ///< Negative edge
-        };
-
-    private:
-        enum struct StatusMask : uint8_t {
-            start_cond_interrupt = 0b1000'0000,
-            overflow_interrupt   = 0b0100'0000,
-            stop_cond            = 0b0010'0000,
-            output_collision     = 0b0001'0000,
-            counter_value        = 0b0000'1111,
-        };
+        static uint8_t const COUNTER_MASK{0b1111};
 
         PortLib::Register8
             data,
@@ -46,18 +31,24 @@ namespace AvrSupport::Usi {
         SelfClass * this_derived() { return static_cast<SelfClass *>(this); }
 
     protected:
+        enum struct StatusMask : uint8_t {
+            start_cond_interrupt = 0b1000'0000,
+            overflow_interrupt   = 0b0100'0000,
+            stop_cond            = 0b0010'0000,
+            output_collision     = 0b0001'0000,
+        };
+
         enum struct WireMode : uint8_t {
             none           = 0b00'00'00'00, ///< None
             three_wire     = 0b00'01'00'00, ///< Three wire mode
             two_wire       = 0b00'10'00'00, ///< Two wire mode
             two_wire_low   = 0b00'11'00'00, ///< Two wire mode w/ SCL pin low on overflow
         };
-
-        bool is_start_cond_interrupt() { return status & static_cast<uint8_t>(StatusMask::start_cond_interrupt); }
-        bool is_overflow_interrupt()   { return status & static_cast<uint8_t>(StatusMask::overflow_interrupt  ); }
-        bool is_stop_cond()            { return status & static_cast<uint8_t>(StatusMask::stop_cond           ); }
-        bool is_output_collision()     { return status & static_cast<uint8_t>(StatusMask::output_collision    ); }
-        uint8_t counter_value()        { return status & static_cast<uint8_t>(StatusMask::counter_value       ); }
+        uint8_t get_counter_value() const { return status & COUNTER_MASK; }
+        
+        bool get_status(StatusMask const selection) const {
+            return status & static_cast<uint8_t>(selection);
+        }
 
         SelfClass & set_wire_mode(WireMode mode) {
             control &= ~static_cast<uint8_t>(ControlMask::wire_mode);
@@ -71,6 +62,13 @@ namespace AvrSupport::Usi {
         }
 
     public:
+        enum struct ClockSource : uint8_t {
+            none_software  = 0b00'00'00'00, ///< None or software strobe
+            compare_match  = 0b00'00'01'00, ///< Timer/Counter0 compare match
+            positive_edge  = 0b00'00'10'00, ///< Positive edge
+            negavive_edge  = 0b00'00'11'00, ///< Negative edge
+        };
+
         Base(
             PortLib::Register8 usidr,
             PortLib::Register8 usibr,
@@ -82,8 +80,6 @@ namespace AvrSupport::Usi {
             status {usisr},
             control{usicr}
         {}
-
-        virtual SelfClass & initialize() = 0;
 
         SelfClass & set_clock_source(ClockSource source) {
             control &= ~static_cast<uint8_t>(ControlMask::clock_source);

@@ -102,40 +102,20 @@ namespace AvrSupport::Peripheral {
             latch();
         }
 
-        /// Shift in a struct or primitive, normal byte order, LSB first.
-        template<typename Type>
-        void shift_up_big_endian(Type const & value) {
-            using each_byte = Utility::BytewiseConst<Type const, Utility::Endian::big>;
+        /// Shift in a struct or primitive, LSB first.
+        template<Utility::Endian ENDIAN, typename Type>
+        void shift_up(Type const & value) {
+            using each_byte = Utility::BytewiseConst<Type const, ENDIAN>;
 
             for (auto & byte : each_byte{value})
                 shift_up_unlatched(byte);
             
             latch();
         }
-        /// Shift in a struct or primitive, normal byte order, MSB first.
-        template<typename Type>
-        void shift_down_big_endian(Type const & value) {
-            using each_byte = Utility::BytewiseConst<Type const, Utility::Endian::big>;
-
-            for (auto & byte : each_byte{value})
-                shift_down_unlatched(byte);
-            
-            latch();
-        }
-        /// Shift in a struct or value, reverse byte order, LSB first.
-        template<typename Type>
-        void shift_up_little_endian(Type const & value) {
-            using each_byte = Utility::BytewiseConst<Type const, Utility::Endian::little>;
-
-            for (auto & byte : each_byte{value})
-                shift_up_unlatched(byte);
-
-            latch();
-        }
-        /// Shift in a struct or value, reverse byte order, MSB first.
-        template<typename Type>
-        void shift_down_little_endian(Type const & value) {
-            using each_byte = Utility::BytewiseConst<Type const, Utility::Endian::little>;
+        /// Shift in a struct or primitive, MSB first.
+        template<Utility::Endian ENDIAN, typename Type>
+        void shift_down(Type const & value) {
+            using each_byte = Utility::BytewiseConst<Type const, ENDIAN>;
 
             for (auto & byte : each_byte{value})
                 shift_down_unlatched(byte);
