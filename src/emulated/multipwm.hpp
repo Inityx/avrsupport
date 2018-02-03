@@ -2,7 +2,7 @@
 #define AVRSUPPORT_EMULATED_MULTIPWM_H
 
 #include <stdint.h>
-#include <stddef.h>
+#include <utility/stddef.hpp>
 
 #include <portlib/register.hpp>
 #include <portlib/digitalport.hpp>

@@ -1,5 +1,6 @@
 # Build definitions
-CXX=g++
+CXX=avr-g++
+TESTING_CXX=clang++
 CFLAGS=-Wpedantic --std=c++17
 CFLAGS_RELEASE=-Os
 CFLAGS_TEST=-O0
@@ -10,7 +11,7 @@ ifneq ($(CI), true)
 endif
 
 # Structure
-MODULES=chips emulated mapping peripheral portlib usi utility
+MODULES=$(shell find src/* -type d | sed 's/^src\/\?//g')
 
 # Docs
 DOXYGEN=doxygen
@@ -32,7 +33,7 @@ include/$(1)/%.hpp: src/$(1)/%.hpp | include/$(1)
 
 include/$(1):
 	@echo " MD $$@"
-	@mkdir $$@
+	@mkdir -p $$@
 
 endef
 
@@ -48,7 +49,7 @@ test: includes $(TEST_BUILD) test_clean
 
 test/build/%.out: test/%.cpp
 	@printf " Testing $(notdir $(basename $@))... "
-	@$(CXX) $< -o $@ $(CFLAGS) $(CFLAGS_TEST) -I include/
+	@$(TESTING_CXX) $< -o $@ $(CFLAGS) $(CFLAGS_TEST) -I include/
 	@$@
 	@echo -e "$(GREEN)Success$(RESET)."
 

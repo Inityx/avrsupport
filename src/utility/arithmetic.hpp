@@ -1,9 +1,8 @@
 #ifndef ARITHMETIC_H
 #define ARITHMETIC_H
 
-#include <stdlib.h>
-
 #include <utility/array.hpp>
+#include <utility/stddef.hpp>
 
 /// %Arithmetic helpers
 namespace AvrSupport::Utility::Arithmetic {
@@ -25,6 +24,24 @@ namespace AvrSupport::Utility::Arithmetic {
         );
     }
 
+    /// Reference-based minimum, default lhs
+    template<typename Type>
+    constexpr Type & min(Type & lhs, Type & rhs) {
+        return lhs <= rhs ? lhs : rhs;
+    }
+    
+    /// Reference-based maximum, default lhs
+    template<typename Type>
+    constexpr Type & max(Type & lhs, Type & rhs) {
+        return lhs >= rhs ? lhs : rhs;
+    }
+
+    /// Absolute value
+    template<typename Type>
+    constexpr Type abs(Type value) {
+        return value >= 0 ? value : 0 - value;
+    }
+
     /// Unambiguous non-coercive absolute difference (1-dimensional distance)
     template<typename Type>
     constexpr Type abs_diff(Type const & a, Type const & b) {
@@ -32,7 +49,7 @@ namespace AvrSupport::Utility::Arithmetic {
     }
 
     /// Circular index incrementor
-    template<size_t LIMIT, typename IndexType>
+    template<avr_size_t LIMIT, typename IndexType>
     constexpr void circular_increment_index(IndexType & index) {
         index++;
         if (index >= LIMIT) index = 0;

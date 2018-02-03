@@ -1,10 +1,10 @@
-#ifndef USI_TWI_H
-#define USI_TWI_H
+#ifndef AVRSUPPORT_SERIAL_USI_TWI_H
+#define AVRSUPPORT_SERIAL_USI_TWI_H
 
 #include <portlib/register.hpp>
-#include <usi/base.hpp>
+#include <serial/usi/base.hpp>
 
-namespace AvrSupport::Usi {
+namespace AvrSupport::Serial::Usi {
     /// USI-powered Two-Wire Interface (TWI/I2C) driver
     struct Twi : public Usi::Base<Twi> {
         Twi(

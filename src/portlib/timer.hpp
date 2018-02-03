@@ -42,8 +42,8 @@ namespace AvrSupport::PortLib {
         };
             
     private:
-        static uint8_t const PRESCALE_BITMASK{~0b111};
-        static uint8_t const MODE_BITMASK{~0b11};
+        static uint8_t const PRESCALE_BITMASK{0b111};
+        static uint8_t const MODE_BITMASK{0b11};
 
         RegisterT
             timer_counter,
@@ -80,13 +80,13 @@ namespace AvrSupport::PortLib {
         }
 
         SelfClass & set_prescale(Prescale scale) {
-            config_b &= PRESCALE_BITMASK;
+            config_b &= ~PRESCALE_BITMASK;
             config_b |= static_cast<uint8_t>(scale);
             return *this;
         }
 
         SelfClass & set_mode(Mode mode) {
-            config_a &= MODE_BITMASK;
+            config_a &= ~MODE_BITMASK;
             config_a |= static_cast<uint8_t>(mode);
             return *this;
         }

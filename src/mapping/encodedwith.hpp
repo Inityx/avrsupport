@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <utility/iterator.hpp>
 #include <utility/cstring.hpp>
+#include <utility/stddef.hpp>
 
 namespace AvrSupport::Mapping {
     /**
@@ -34,7 +35,7 @@ namespace AvrSupport::Mapping {
         constexpr Iter end()   const { return Iter{Utility::CString::end(string)}; }
 
         /// `constexpr` string encoding.
-        template<size_t COUNT>
+        template<avr_size_t COUNT>
         constexpr static Utility::Array<Encoding, COUNT> collected(
             InputType string[],
             char const filler = ' '

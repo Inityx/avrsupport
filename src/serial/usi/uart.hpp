@@ -1,10 +1,10 @@
-#ifndef USI_UART_H
-#define USI_UART_H
+#ifndef AVRSUPPORT_SERIAL_USI_UART_H
+#define AVRSUPPORT_SERIAL_USI_UART_H
 
 #include <portlib/register.hpp>
-#include <usi/base.hpp>
+#include <serial/usi/base.hpp>
 
-namespace AvrSupport::Usi {
+namespace AvrSupport::Serial::Usi {
     /// USI-powered Universal Async Receiver/Transmitter (UART) driver
     /// @see Serial::Uart
     struct Uart : public Usi::Base<Uart> {

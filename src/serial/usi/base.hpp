@@ -1,9 +1,9 @@
-#ifndef AVRSUPPORT_USI_BASE_H
-#define AVRSUPPORT_USI_BASE_H
+#ifndef AVRSUPPORT_SERIAL_USI_BASE_H
+#define AVRSUPPORT_SERIAL_USI_BASE_H
 
 #include <portlib/register.hpp>
 
-namespace AvrSupport::Usi {
+namespace AvrSupport::Serial::Usi {
     /** A base Universal %Serial Interface (USI) driver.
      * This class is used to implement other serial interfaces.
      * @tparam SelfClass The derived class ([CRTP](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern))
@@ -12,8 +12,8 @@ namespace AvrSupport::Usi {
     struct Base {
     private:
         enum struct ControlMask : uint8_t {
-            start_cond_int = 0b10'00'00'00, ///< Start condition interrupt enable
-            overflow_int   = 0b01'00'00'00, ///< Counter overflow interrupt enable
+            start_cond_irq = 0b10'00'00'00, ///< Start condition interrupt enable
+            overflow_irq   = 0b01'00'00'00, ///< Counter overflow interrupt enable
             wire_mode      = 0b00'11'00'00, ///< Wire mode select (Usi::WireMode)
             clock_source   = 0b00'00'11'00, ///< Clock source select (Usi::ClockSource)
             clock_strobe   = 0b00'00'00'10, ///< Clock strobe
@@ -32,10 +32,10 @@ namespace AvrSupport::Usi {
 
     protected:
         enum struct StatusMask : uint8_t {
-            start_cond_interrupt = 0b1000'0000,
-            overflow_interrupt   = 0b0100'0000,
-            stop_cond            = 0b0010'0000,
-            output_collision     = 0b0001'0000,
+            start_cond_irq = 0b1000'0000,
+            overflow_irq   = 0b0100'0000,
+            stop_cond      = 0b0010'0000,
+            data_collision = 0b0001'0000,
         };
 
         enum struct WireMode : uint8_t {
@@ -61,14 +61,6 @@ namespace AvrSupport::Usi {
             return *this_derived();
         }
 
-    public:
-        enum struct ClockSource : uint8_t {
-            none_software  = 0b00'00'00'00, ///< None or software strobe
-            compare_match  = 0b00'00'01'00, ///< Timer/Counter0 compare match
-            positive_edge  = 0b00'00'10'00, ///< Positive edge
-            negavive_edge  = 0b00'00'11'00, ///< Negative edge
-        };
-
         Base(
             PortLib::Register8 usidr,
             PortLib::Register8 usibr,
@@ -80,6 +72,14 @@ namespace AvrSupport::Usi {
             status {usisr},
             control{usicr}
         {}
+
+    public:
+        enum struct ClockSource : uint8_t {
+            none_software  = 0b00'00'00'00, ///< None or software strobe
+            compare_match  = 0b00'00'01'00, ///< Timer/Counter0 compare match
+            positive_edge  = 0b00'00'10'00, ///< Positive edge
+            negavive_edge  = 0b00'00'11'00, ///< Negative edge
+        };
 
         SelfClass & set_clock_source(ClockSource source) {
             control &= ~static_cast<uint8_t>(ControlMask::clock_source);

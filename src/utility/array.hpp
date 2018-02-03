@@ -1,11 +1,11 @@
 #ifndef ARRAY_H
 #define ARRAY_H
 
-#include <stddef.h>
+#include <utility/stddef.hpp>
 
 namespace AvrSupport::Utility {
     /// A `std::array` replacement
-    template<typename Type, size_t SIZE>
+    template<typename Type, avr_size_t SIZE>
     struct Array {
         Type _storage[SIZE ? SIZE : 1]; // Allow zero-sized arrays
 
@@ -14,12 +14,12 @@ namespace AvrSupport::Utility {
         constexpr Type       * end()         { return &_storage[SIZE]; }
         constexpr Type const * end()   const { return &_storage[SIZE]; }
         
-        constexpr size_t size()     const { return SIZE; }
-        constexpr size_t max_size() const { return SIZE; }
-        constexpr bool   empty()    const { return SIZE == 0; }
+        constexpr avr_size_t size()     const { return SIZE; }
+        constexpr avr_size_t max_size() const { return SIZE; }
+        constexpr bool       empty()    const { return SIZE == 0; }
         
-        constexpr Type       & operator[](size_t const i)       { return _storage[i]; }
-        constexpr Type const & operator[](size_t const i) const { return _storage[i]; }
+        constexpr Type       & operator[](avr_size_t const i)       { return _storage[i]; }
+        constexpr Type const & operator[](avr_size_t const i) const { return _storage[i]; }
 
         constexpr bool operator==(Array<Type, SIZE> const & rhs) const {
             for (

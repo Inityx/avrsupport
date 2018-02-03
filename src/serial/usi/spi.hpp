@@ -1,13 +1,13 @@
-#ifndef AVRSUPPORT_USI_SPI_H
-#define AVRSUPPORT_USI_SPI_H
+#ifndef AVRSUPPORT_SERIAL_USI_SPI_H
+#define AVRSUPPORT_SERIAL_USI_SPI_H
 
 #include <portlib/register.hpp>
-#include <usi/base.hpp>
+#include <serial/usi/base.hpp>
 
-namespace AvrSupport::Usi {
+namespace AvrSupport::Serial::Usi {
     /// USI-powered %Serial %Peripheral Interface (SPI) driver
-    /// @see Serial::Spi
-    struct Spi : public Usi::Base<Spi> {
+    /// @see Serial::Native::Spi
+    struct Spi : public Interface::Spi<Spi>, public Usi::Base<Spi> {
         Spi(
             PortLib::Register8 usidr,
             PortLib::Register8 usibr,
@@ -22,22 +22,21 @@ namespace AvrSupport::Usi {
             return *this;
         }
 
-        // Asynchronous has risk of modification while sending
         template<typename Type>
-        Type swap_transact(Type const & value);
-
-        template<typename Type>
-        void swap_in_place(Type & buffer = Type(0));
-
-        template<typename Type = uint16_t>
-        void read(Type & value) { return value = swap_transact(Type(0)); }
-
-        template<typename Type = uint16_t>
-        Type read_n() {
+        Type swap(Type const value) {
+            // TODO
+            return Type(0);
         }
 
         template<typename Type>
-        void write(Type & value) { swap(value); }
+        void read(Type & value) {
+            return value = swap_transact_reference(Type(0));
+        }
+
+        template<typename Type>
+        Type read_dyn_n() {
+        }
+
     };
 }
 

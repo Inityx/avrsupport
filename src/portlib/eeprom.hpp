@@ -2,14 +2,13 @@
 #define AVRSUPPORT_PORTLIB_EEPROM_H
 
 #include <stdint.h>
-#include <stddef.h>
 
 #include <portlib/register.hpp>
 #include <utility/bytewise.hpp>
+#include <utility/stddef.hpp>
 
 namespace AvrSupport::PortLib {
-    using eeprom_size_t = uint16_t;
-    using RegisterE = Register<eeprom_size_t>;    
+    using RegisterE = Register<avr_size_t>;
 
     /**
      * A base EEPROM driver class.
@@ -19,7 +18,7 @@ namespace AvrSupport::PortLib {
      * 
      * @tparam EEPROM_SIZE Size of the device EEPROM in bytes
      */
-    template<eeprom_size_t EEPROM_SIZE>
+    template<avr_size_t EEPROM_SIZE>
     struct Eeprom {
     private:
         enum struct ControlMask : uint8_t {
@@ -47,13 +46,13 @@ namespace AvrSupport::PortLib {
             return control & static_cast<uint8_t>(ControlMask::write);
         }
 
-        uint8_t read_byte(eeprom_size_t const location) {
+        uint8_t read_byte(avr_size_t const location) {
             address = location;
             control |= static_cast<uint8_t>(ControlMask::read);
             return data;
         }
 
-        void write_byte(eeprom_size_t const location, uint8_t const byte) {
+        void write_byte(avr_size_t const location, uint8_t const byte) {
             address = location;
             data = byte;
             control |= static_cast<uint8_t>(ControlMask::master_write);
@@ -69,7 +68,7 @@ namespace AvrSupport::PortLib {
      * 
      * @tparam EEPROM_SIZE Size of the device EEPROM in bytes
      */
-    template<eeprom_size_t EEPROM_SIZE>
+    template<avr_size_t EEPROM_SIZE>
     struct BufferEeprom : private Eeprom<EEPROM_SIZE> {
     private:
         using BaseEeprom = Eeprom<EEPROM_SIZE>;
@@ -89,7 +88,7 @@ namespace AvrSupport::PortLib {
          * @param [out] dest Memory to write into
          */
         template<typename ReadType>
-        void sync_read(eeprom_size_t location, ReadType & dest) {
+        void sync_read(avr_size_t location, ReadType & dest) {
             using EachByte = Utility::Bytewise<ReadType, Utility::Endian::big>;
 
             while (BaseEeprom::is_writing());
@@ -102,7 +101,7 @@ namespace AvrSupport::PortLib {
         
         /// Write struct or primitive synchronously.
         template<typename WriteType>
-        void sync_write(eeprom_size_t location, WriteType const & source) {
+        void sync_write(avr_size_t location, WriteType const & source) {
             using EachByteConst = Utility::BytewiseConst<WriteType const, Utility::Endian::big>;
 
             for (uint8_t const & byte : EachByteConst{source}) {
@@ -119,7 +118,7 @@ namespace AvrSupport::PortLib {
          * @param location EEPROM location
          * @param source   String to write
          */
-        void sync_write_string(eeprom_size_t location, char const * source) {
+        void sync_write_string(avr_size_t location, char const * source) {
             while (true) {
                 BaseEeprom::write_byte(location, *source);
                 if (!*source) break;
@@ -137,11 +136,11 @@ namespace AvrSupport::PortLib {
          * @param max_length Maximum number of bytes to read
          */
         void sync_read_string(
-            eeprom_size_t location,
+            avr_size_t location,
             char * dest,
-            eeprom_size_t const max_length
+            avr_size_t const max_length
         ) {
-            for (eeprom_size_t _{0}; _ < max_length; _++) {
+            for (avr_size_t _{0}; _ < max_length; _++) {
                 *dest = BaseEeprom::read_byte(location);
                 if (!*dest) break;
                 location++;
@@ -158,7 +157,7 @@ namespace AvrSupport::PortLib {
      * 
      * @tparam EEPROM_SIZE Size of the device EEPROM in bytes
      */
-    template<eeprom_size_t EEPROM_SIZE, typename ValueType>
+    template<avr_size_t EEPROM_SIZE, typename ValueType>
     struct ValueEeprom : private BufferEeprom<EEPROM_SIZE> {
     private:
         using BaseBufferEeprom = BufferEeprom<EEPROM_SIZE>;
@@ -167,14 +166,14 @@ namespace AvrSupport::PortLib {
             bool active; 
             ValueType value;
 
-            constexpr static eeprom_size_t const VALUE_OFFSET{
-                reinterpret_cast<eeprom_size_t const>(
+            constexpr static avr_size_t const VALUE_OFFSET{
+                reinterpret_cast<avr_size_t const>(
                     &(static_cast<Storage *>(0)->value)
                 )
             };
         };
 
-        eeprom_size_t location{0};
+        avr_size_t location{0};
 
         void move_to_active() {
             // Increment location until active found

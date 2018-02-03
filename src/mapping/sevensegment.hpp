@@ -1,12 +1,12 @@
 #ifndef AVRSUPPORT_MAPPING_SEVENSEGMENT_H
 #define AVRSUPPORT_MAPPING_SEVENSEGMENT_H
 
-#include <stddef.h>
 #include <stdint.h>
 
+#include <mapping/encodedwith.hpp>
 #include <utility/array.hpp>
 #include <utility/arithmetic.hpp>
-#include <mapping/encodedwith.hpp>
+#include <utility/stddef.hpp>
 
 namespace AvrSupport::Mapping {
     /// Seven-segment display character mappings
@@ -14,7 +14,7 @@ namespace AvrSupport::Mapping {
         using Encoding = uint8_t; ///< Segments `.abcdefg`
 
     private:
-        constexpr static size_t ALPHA_OFFSET = 10;
+        constexpr static avr_ptrdiff_t ALPHA_OFFSET = 10;
         constexpr static Utility::Array<Encoding, 36> const CHARS{
             //. abcdefg
             0b0'1111110, // 0

@@ -1,5 +1,7 @@
 #include <utility/iterator.hpp>
+#include <utility/array.hpp>
 
+#include <cstdio>
 #include <cassert>
 #include <vector>
 #include <cstdint>
@@ -13,11 +15,11 @@ constexpr int sum(int const start, int const end) {
     return accum;
 }
 
-void test_constexpr() {
+void constexpr_test() {
     static_assert(sum(3, 10) == 42);
 }
 
-void test_range() {
+void range_test() {
     std::vector< int8_t> acc_signed;
     std::vector<uint8_t> acc_unsigned;
     std::vector<uint8_t> correct_default    { 0, 1, 2, 3, 4 };
@@ -58,8 +60,22 @@ void test_range() {
     assert(acc_signed == correct_bw_step);
 }
 
+
+void subslice_test() {
+    constexpr static Array<uint8_t, 7> const source { 2, 5, 6, 7, 6, 4, 3 };
+    constexpr Subslice const
+        first_five  {source, 5},
+        middle_three{source, 3, 2};
+    
+    static_assert(first_five  .begin() == &source[0]);
+    static_assert(first_five  .end  () == &source[5]);
+    static_assert(middle_three.begin() == &source[2]);
+    static_assert(middle_three.end  () == &source[5]);
+}
+
 int main() {
-    test_range();
-    test_constexpr();
+    range_test();
+    constexpr_test();
+    subslice_test();
     return 0;
 }

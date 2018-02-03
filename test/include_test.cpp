@@ -12,10 +12,15 @@
 #include <portlib/register.hpp>
 #include <portlib/timer.hpp>
 
-#include <usi/base.hpp>
-#include <usi/spi.hpp>
-#include <usi/twi.hpp>
-#include <usi/uart.hpp>
+#include <serial/interface/spi.hpp>
+
+#include <serial/native/spi.hpp>
+#include <serial/native/usart.hpp>
+
+#include <serial/usi/base.hpp>
+#include <serial/usi/spi.hpp>
+#include <serial/usi/twi.hpp>
+#include <serial/usi/uart.hpp>
 
 #include <utility/arithmetic.hpp>
 #include <utility/array.hpp>

@@ -1,12 +1,13 @@
 #include <portlib/register.hpp>
 #include <portlib/eeprom.hpp>
+#include <utility/stddef.hpp>
 
 #include <cstdint>
 #include <cassert>
 
 using namespace AvrSupport;
 
-PortLib::eeprom_size_t const EEPROM_SIZE{512};
+avr_size_t const EEPROM_SIZE{512};
 
 uint8_t EEDR, EECR;
 uint16_t EEAR;
