@@ -1,16 +1,20 @@
 #include <cassert>
-#include <cstdio>
+
+#include <portlib/digitalport.hpp>
+#include <portlib/digitalpin.hpp>
+
 #include <emulated/multipwm.hpp>
 
 using namespace AvrSupport;
 
 using Utility::Array;
 using PortLib::DigitalPort;
-using Emulated::MultiPWM;
+using Emulated::MultiPwm;
 
-volatile uint8_t PORTA{0x00};
-volatile uint8_t PINA{0x00};
-volatile uint8_t DDRA{0x00};
+volatile uint8_t
+    PORTA{0x00},
+    PINA{0x00},
+    DDRA{0x00};
 
 DigitalPort port_a{ PINA, PORTA, DDRA };
 
@@ -18,7 +22,7 @@ int main() {
     Array<uint8_t, 3> const PINS { 0, 1, 2 };
     Array<uint8_t, 3> const LEVELS { 0, 2, 4 };
 
-    MultiPWM<3, 1> pwm { PINS, LEVELS, port_a };
+    MultiPwm<3, 1> pwm { PINS, LEVELS, port_a };
 
     pwm.set_pins_out();
 

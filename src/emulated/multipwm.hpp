@@ -2,9 +2,7 @@
 #define AVRSUPPORT_EMULATED_MULTIPWM_H
 
 #include <stdint.h>
-#include <utility/stddef.hpp>
 
-#include <portlib/register.hpp>
 #include <portlib/digitalport.hpp>
 
 #include <utility/array.hpp>
@@ -17,7 +15,7 @@ namespace AvrSupport::Emulated {
      * @tparam STEP The amount by which the duty cycles are adjusted
      */
     template<PortLib::PinIndex COUNT, uint8_t STEP>
-    struct MultiPWM {
+    struct MultiPwm {
     private:
         struct Channel {
             PortLib::PinIndex pin_index;
@@ -31,7 +29,7 @@ namespace AvrSupport::Emulated {
         bool active{true};
         
     public:
-        MultiPWM( // Can't be constexpr because port is non-const
+        MultiPwm( // Can't be constexpr because port is non-const
             Utility::Array<PortLib::PinIndex, COUNT> const & pins,
             Utility::Array<uint8_t,           COUNT> const & levels,
             PortLib::DigitalPort & port
@@ -67,23 +65,28 @@ namespace AvrSupport::Emulated {
                 );
         }
 
-        void pause()  { active = false; }
         void resume() { active = true;  }
+        void pause()  { active = false; }
+        /// Pause and pull all pins low
+        void pause_all_low() {
+            pause();
+            for (auto & channel : channels)
+                port.set_low(channel.pin_index);
+        }
 
         /// Advance one tick in PWM timing
         void step() {
             if (!active) return;
 
-            if (counter > 0) {
+            if (counter == 0) {
+                // At start set zero pins low, others high
+                for (auto & channel : channels)
+                    port.set_at(channel.pin_index, channel.level != 0);
+            } else {
                 // Set pins low if count passed level
                 for (auto & channel : channels)
                     if (counter > channel.level)
                         port.set_low(channel.pin_index);
-            } else {
-                // Set all pins high at start
-                for (auto & channel : channels)
-                    if (channel.level != 0)
-                        port.set_high(channel.pin_index);
             }
             
             counter++;
