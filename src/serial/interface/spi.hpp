@@ -17,13 +17,13 @@ namespace AvrSupport::Serial::Interface {
         virtual SelfClass & swap_byte_into(uint8_t       & value) = 0;
         virtual bool        byte_ready    (                     ) = 0;
 
-        template<avr_size_t BUFFER_SIZE>
+        template<Utility::avr_size_t BUFFER_SIZE>
         SelfClass & read_bytes_into(
             Utility::Array<uint8_t, BUFFER_SIZE> & buffer,
-            avr_size_t const count
+            Utility::avr_size_t const count
         ) {
             using Utility::Subslice;
-            auto const min_size = Utility::Arithmetic::min<avr_size_t const>;
+            auto const min_size = Utility::Arithmetic::min<Utility::avr_size_t const>;
 
             for (auto & byte : Subslice{buffer, min_size(count, BUFFER_SIZE)}) {
                 while(!byte_ready());
@@ -33,7 +33,7 @@ namespace AvrSupport::Serial::Interface {
             return byte_ready;
         }
 
-        template<avr_size_t BUFFER_SIZE>
+        template<Utility::avr_size_t BUFFER_SIZE>
         bool read_string(Utility::Array<char, BUFFER_SIZE> & buffer) {
             using Utility::Subslice;
 

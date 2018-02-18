@@ -35,7 +35,11 @@ namespace AvrSupport::Peripheral {
             storage_clock{storage_clock},
             master_reset {master_reset},
             output_enable{output_enable}
-        {}
+        {
+            shift_clock.set_low();
+            enable();
+            clear();
+        }
 
         /// Enable output (`output_enable` pin).
         void enable() {
@@ -61,12 +65,6 @@ namespace AvrSupport::Peripheral {
                 master_reset->set_high();
                 latch();
             }
-        }
-        /// Set shift clock low, enable output, clear all pins, and pulse latch.
-        void initialize() {
-            shift_clock.set_low();
-            enable();
-            clear();
         }
 
         /// Shift in a bit without pulsing latch.

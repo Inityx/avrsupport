@@ -6,6 +6,8 @@
 
 #include <portlib/register.hpp>
 
+#include <utility/stddef.hpp>
+
 namespace AvrSupport::Serial::Native {
     struct Usart {
     private:
@@ -39,9 +41,9 @@ namespace AvrSupport::Serial::Native {
             clock_polarity = 0b00'00'0001,
         };
 
-        static size_t  const CHAR_SIZE_LOW_OFFSET{1};
-        static uint8_t const CHAR_SIZE_LOW_MASK {0b011};
-        static uint8_t const CHAR_SIZE_HIGH_MASK{0b100};
+        static Utility::avr_size_t const CHAR_SIZE_LOW_OFFSET{1};
+        static uint8_t         const CHAR_SIZE_LOW_MASK {0b011};
+        static uint8_t         const CHAR_SIZE_HIGH_MASK{0b100};
         enum class Mode : uint8_t {
             async_usart = 0b00'00'0000,
             sync_usart  = 0b01'00'0000,

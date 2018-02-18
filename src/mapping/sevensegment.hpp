@@ -14,7 +14,7 @@ namespace AvrSupport::Mapping {
         using Encoding = uint8_t; ///< Segments `.abcdefg`
 
     private:
-        constexpr static avr_ptrdiff_t ALPHA_OFFSET = 10;
+        constexpr static Utility::avr_ptrdiff_t ALPHA_OFFSET = 10;
         constexpr static Utility::Array<Encoding, 36> const CHARS{
             //. abcdefg
             0b0'1111110, // 0
@@ -43,7 +43,7 @@ namespace AvrSupport::Mapping {
             0b0'0001110, // L
             0b0'1010101, // M
             0b0'0010101, // N
-            0b0'1111110, // O
+            0b0'0011101, // O
             0b0'1100111, // P
             0b0'1110011, // Q
             0b0'0000101, // R
@@ -58,6 +58,7 @@ namespace AvrSupport::Mapping {
         };
         enum struct Special : Encoding {
             //         . abcdefg
+            space  = 0b0'0000000,
             dot    = 0b1'0000000,
             dash   = 0b0'0000001,
             uscore = 0b0'0001000,
@@ -82,6 +83,7 @@ namespace AvrSupport::Mapping {
             if (within(c, {'A', 'Z'})) return CHARS[c - 'A' + ALPHA_OFFSET];
 
             switch (c) {
+                case ' ': return static_cast<Encoding>(Special::space);
                 case '.': return static_cast<Encoding>(Special::dot);
                 case '-': return static_cast<Encoding>(Special::dash);
                 case '_': return static_cast<Encoding>(Special::uscore);

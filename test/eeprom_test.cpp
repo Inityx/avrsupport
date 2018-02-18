@@ -7,7 +7,7 @@
 
 using namespace AvrSupport;
 
-avr_size_t const EEPROM_SIZE{512};
+Utility::avr_size_t const EEPROM_SIZE{512};
 
 uint8_t EEDR, EECR;
 uint16_t EEAR;

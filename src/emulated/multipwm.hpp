@@ -14,11 +14,11 @@ namespace AvrSupport::Emulated {
      * @tparam COUNT The number of channels
      * @tparam STEP The amount by which the duty cycles are adjusted
      */
-    template<PortLib::PinIndex COUNT, uint8_t STEP>
+    template<PortLib::DigitalPort::PinIndex COUNT, uint8_t STEP>
     struct MultiPwm {
     private:
         struct Channel {
-            PortLib::PinIndex pin_index;
+            PortLib::DigitalPort::PinIndex pin_index;
             uint8_t level;
         };
 
@@ -30,7 +30,7 @@ namespace AvrSupport::Emulated {
         
     public:
         MultiPwm( // Can't be constexpr because port is non-const
-            Utility::Array<PortLib::PinIndex, COUNT> const & pins,
+            Utility::Array<PortLib::DigitalPort::PinIndex, COUNT> const & pins,
             Utility::Array<uint8_t,           COUNT> const & levels,
             PortLib::DigitalPort & port
         ) :
@@ -47,12 +47,12 @@ namespace AvrSupport::Emulated {
         }
 
         /// Set desired duty cycle for a channel, 0 to 255
-        void set_level(PortLib::PinIndex index, uint8_t value) {
+        void set_level(PortLib::DigitalPort::PinIndex index, uint8_t value) {
             channels[index].level = value;
         }
         
         /// Get the current duty cycle for a pin, 0 to 255
-        uint8_t get_level(PortLib::PinIndex index) const {
+        uint8_t get_level(PortLib::DigitalPort::PinIndex index) const {
             return channels[index].level;
         }
         

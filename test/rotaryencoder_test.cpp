@@ -1,11 +1,13 @@
 #include <cassert>
+#include <cstddef>
 #include <array>
 
 #include <peripheral/rotaryencoder.hpp>
 
-using Rotary = AvrSupport::Peripheral::RotaryEncoder;
+using namespace AvrSupport;
+using Rotary = Peripheral::RotaryEncoder;
 
-template<size_t COUNT>
+template<std::size_t COUNT>
 using Actions = std::array<std::array<int, 2> const, COUNT> const;
 
 Actions<5>
@@ -17,7 +19,7 @@ Actions<9>
     FALSE_NEG_1 { 0,0, 0,1, 1,1, 0,1, 1,1, 1,0, 1,1, 1,0, 0,0 },
     FALSE_NEG_2 { 0,0, 0,1, 1,1, 1,0, 1,1, 0,1, 1,1, 1,0, 0,0 };
 
-template<size_t COUNT>
+template<std::size_t COUNT>
 void rotary_apply(
     Rotary &rotary,
     Actions<COUNT> &actions

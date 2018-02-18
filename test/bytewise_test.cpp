@@ -1,5 +1,6 @@
 #include <utility/bytewise.hpp>
 #include <utility/array.hpp>
+#include <utility/stddef.hpp>
 
 #include <cassert>
 #include <cstdint>
@@ -8,10 +9,14 @@
 
 #include <cstdio>
 
-using namespace AvrSupport::Utility;
+using namespace AvrSupport;
+using Utility::Array;
+using Utility::Bytewise;
+using Utility::BytewiseConst;
+using Utility::Endian;
 
-template<size_t COUNT> using Bytes    = const Array<uint8_t, COUNT>;
-template<size_t COUNT> using BytesMut =       Array<uint8_t, COUNT>;
+template<Utility::avr_size_t COUNT> using Bytes    = const Array<uint8_t, COUNT>;
+template<Utility::avr_size_t COUNT> using BytesMut =       Array<uint8_t, COUNT>;
 
 void scramble(uint8_t & byte, uint8_t & prev) {
     uint8_t temp = byte;
@@ -21,7 +26,7 @@ void scramble(uint8_t & byte, uint8_t & prev) {
 
 template<typename Correct, typename Tested>
 bool compare(Correct correct, Tested tested) {
-    for (size_t i{0}; i<correct.size(); i++)
+    for (Utility::avr_size_t i{0}; i<correct.size(); i++)
         if (correct[i] != tested[i])
             return false;
 

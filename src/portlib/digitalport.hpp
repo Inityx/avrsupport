@@ -2,12 +2,13 @@
 #define AVRSUPPORT_PORTLIB_DIGITALPORT_H
 
 #include <portlib/register.hpp>
+#include <utility/stddef.hpp>
 
 namespace AvrSupport::PortLib {
-    using PinIndex = uint8_t; ///< Type for indexing pins
-
     /// I/O for a full digital port
     struct DigitalPort {
+        using PinIndex = uint8_t; ///< Type for indexing pins
+
         Register8 pinx, portx, ddrx;
 
         DigitalPort(
@@ -33,9 +34,13 @@ namespace AvrSupport::PortLib {
         DigitalPort & set_low (PinIndex const index) { portx &= ~(1<<index); return *this; }
         DigitalPort & toggle  (PinIndex const index) { portx ^=  (1<<index); return *this; }
 
-        DigitalPort & set_at(PinIndex const index, bool state) {
-            state ? set_high(index) : set_low(index);
+        DigitalPort & set_at(PinIndex const index, bool const level) {
+            level ? set_high(index) : set_low(index);
             return *this;
+        }
+
+        DigitalPort & set_at(PinIndex const index, Utility::LogicLevel const level) {
+            return set_at(index, static_cast<bool>(level));
         }
     };
 }

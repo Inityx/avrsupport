@@ -8,8 +8,6 @@
 
 /// %Bytewise iteration helpers
 namespace AvrSupport::Utility {
-    enum struct Endian : uint8_t { big, little };
-
     /** A bytewise iterator adapter.
      * This adapter yields an iterator over each byte of a struct or primitive.
      * @tparam SourceType The datatype to be iterated over

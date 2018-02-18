@@ -35,7 +35,7 @@ namespace AvrSupport::Mapping {
         constexpr Iter end()   const { return Iter{Utility::CString::end(string)}; }
 
         /// `constexpr` string encoding.
-        template<avr_size_t COUNT>
+        template<Utility::avr_size_t COUNT>
         constexpr static Utility::Array<Encoding, COUNT> collected(
             InputType string[],
             char const filler = ' '
