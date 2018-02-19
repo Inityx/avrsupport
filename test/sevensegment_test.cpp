@@ -28,7 +28,7 @@ void map_ascii_test() {
 }
 
 void mapper_string_test() {
-    constexpr Array<SSM::Encoding, 8> const DEADBEEF {
+    constexpr Array<SSM::Encoding, 9> const DEADBEEF {
         0b0'0111101, // d
         0b0'1001111, // E
         0b0'1110111, // A
@@ -37,9 +37,10 @@ void mapper_string_test() {
         0b0'1001111, // E
         0b0'1001111, // E
         0b0'1000111, // F
+        0b1'0000000, // .
     };
-    constexpr Array<SSM::Encoding, 8> const RESULT{
-        SevenSegmentFrom::collected<8>("DeAdBeEf")
+    constexpr Array<SSM::Encoding, 9> const RESULT{
+        SevenSegmentFrom::collected<9>("DeAdBeEf.")
     };
     static_assert(RESULT == DEADBEEF);
 }
