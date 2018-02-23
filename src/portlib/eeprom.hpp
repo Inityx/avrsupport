@@ -19,14 +19,16 @@ namespace AvrSupport::PortLib {
     struct Eeprom {
     private:
         enum struct ControlMask : uint8_t {
-            read         = 0b0001,
-            write        = 0b0010,
-            master_write = 0b0100,
-            interrupt    = 0b1000
+            read         = 0b000'001,
+            write        = 0b000'010,
+            master_write = 0b000'100,
+            interrupt    = 0b001'000
         };
 
         Register8 data, control;
         RegisterE address;
+
+        static uint8_t const CONFIG_MASK{0b111'000};
 
     public:
         Eeprom(
@@ -52,8 +54,14 @@ namespace AvrSupport::PortLib {
         void write_byte(Utility::avr_size_t const location, uint8_t const byte) {
             address = location;
             data = byte;
-            control |= static_cast<uint8_t>(ControlMask::master_write);
-            control |= static_cast<uint8_t>(ControlMask::write);
+
+            uint8_t cfg_and_write = (control & CONFIG_MASK) | static_cast<uint8_t>(ControlMask::write);
+            volatile uint8_t * control_cached{&control};
+            // The prior caching is necessary because the second control write
+            // must be within 4 CPU instructions of the first, and avr-gcc can't
+            // currently substitute static literal references at compile time
+            *control_cached = static_cast<uint8_t>(ControlMask::master_write);
+            *control_cached = cfg_and_write;
         }
     };
     
