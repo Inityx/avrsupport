@@ -19,7 +19,7 @@ struct MyStruct {
     uint8_t thingy;
 };
 
-using Eeprom = PortLib::Eeprom<EEPROM_SIZE>;
+using Eeprom = PortLib::Eeprom;
 using BufferEeprom = PortLib::BufferEeprom<EEPROM_SIZE>;
 template<typename Type>
 using ValueEeprom = PortLib::ValueEeprom<EEPROM_SIZE, Type>;

@@ -15,10 +15,7 @@ namespace AvrSupport::PortLib {
      * 
      * EEPROM driver class with base methods for viewing the current write
      * status, reading a byte, and writing a byte.
-     * 
-     * @tparam EEPROM_SIZE Size of the device EEPROM in bytes
      */
-    template<Utility::avr_size_t EEPROM_SIZE>
     struct Eeprom {
     private:
         enum struct ControlMask : uint8_t {
@@ -69,17 +66,13 @@ namespace AvrSupport::PortLib {
      * @tparam EEPROM_SIZE Size of the device EEPROM in bytes
      */
     template<Utility::avr_size_t EEPROM_SIZE>
-    struct BufferEeprom : private Eeprom<EEPROM_SIZE> {
-    private:
-        using BaseEeprom = Eeprom<EEPROM_SIZE>;
-
-    public:
+    struct BufferEeprom : private Eeprom {
         BufferEeprom(
             Register8 eedr,
             Register8 eecr,
             RegisterE eear
         ) :
-            BaseEeprom{eedr, eecr, eear}
+            Eeprom{eedr, eecr, eear}
         {}
 
         /**
@@ -91,10 +84,10 @@ namespace AvrSupport::PortLib {
         void sync_read(Utility::avr_size_t location, ReadType & dest) {
             using EachByte = Utility::Bytewise<ReadType, Utility::Endian::big>;
 
-            while (BaseEeprom::is_writing());
+            while (Eeprom::is_writing());
 
             for (uint8_t & byte : EachByte{dest}) {
-                dest = BaseEeprom::read_byte(location);
+                dest = Eeprom::read_byte(location);
                 location++;
             }
         }
@@ -105,9 +98,9 @@ namespace AvrSupport::PortLib {
             using EachByteConst = Utility::BytewiseConst<WriteType const, Utility::Endian::big>;
 
             for (uint8_t const & byte : EachByteConst{source}) {
-                while (BaseEeprom::is_writing());
+                while (Eeprom::is_writing());
 
-                BaseEeprom::write_byte(location, byte); 
+                Eeprom::write_byte(location, byte); 
                 location++;
             }
         }
@@ -120,7 +113,7 @@ namespace AvrSupport::PortLib {
          */
         void sync_write_string(Utility::avr_size_t location, char const * source) {
             while (true) {
-                BaseEeprom::write_byte(location, *source);
+                Eeprom::write_byte(location, *source);
                 if (!*source) break;
                 location++;
                 source++;
@@ -141,7 +134,7 @@ namespace AvrSupport::PortLib {
             Utility::avr_size_t const max_length
         ) {
             for (Utility::avr_size_t _{0}; _ < max_length; _++) {
-                *dest = BaseEeprom::read_byte(location);
+                *dest = Eeprom::read_byte(location);
                 if (!*dest) break;
                 location++;
                 dest++;
