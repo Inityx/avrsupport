@@ -3,7 +3,7 @@ CXX=avr-g++
 TESTING_CXX=clang++
 CFLAGS=-Wpedantic --std=c++17
 CFLAGS_RELEASE=-Os
-CFLAGS_TEST=-O0
+CFLAGS_TEST=-O0 -Wno-keyword-macro
 
 ifneq ($(CI), true)
     GREEN=\u001b[32m

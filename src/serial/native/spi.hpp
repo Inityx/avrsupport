@@ -7,7 +7,7 @@
 namespace AvrSupport::Serial::Native {
     /// Native %Serial %Peripheral Interface (SPI) driver
     /// @see Usi::Spi
-    struct Spi{
+    struct Spi : Interface::Spi<Spi> {
     private:
         enum struct ControlMask : uint8_t {
             spi_irq_enable = 0b1000'0000,
@@ -51,6 +51,7 @@ namespace AvrSupport::Serial::Native {
             control |= exponent>>1;
             status  &= ~static_cast<uint8_t>(StatusMask::double_speed);
             status  |= ~exponent & 0b1;
+            return *this;
         }
     };
 }

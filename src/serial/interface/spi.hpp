@@ -8,8 +8,6 @@
 namespace AvrSupport::Serial::Interface {
     template<typename SelfClass>
     struct Spi {
-        virtual SelfClass & initialize() = 0;
-
         // Virtual methods
         virtual uint8_t     read_byte     (                     ) = 0;
         virtual uint8_t     swap_byte     (uint8_t const & value) = 0;

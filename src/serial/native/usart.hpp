@@ -5,13 +5,13 @@
 #include <stddef.h>
 
 #include <portlib/register.hpp>
-
+#include <serial/interface/uart.hpp>
 #include <utility/stddef.hpp>
 
 namespace AvrSupport::Serial::Native {
-    struct Usart {
+    struct Usart : public Interface::Uart<Usart> {
     private:
-        enum class ControlStatusAMask : uint8_t {
+        enum class ControlAMask : uint8_t {
             receive_complete  = 0b1000'0000,
             transmit_complete = 0b0100'0000,
             data_reg_empty    = 0b0010'0000,
@@ -21,7 +21,7 @@ namespace AvrSupport::Serial::Native {
             double_speed      = 0b0000'0010,
             multi_processor   = 0b0000'0001,
         };
-        enum class ControlStatusBMask : uint8_t {
+        enum class ControlBMask : uint8_t {
             rx_complete_irq_enable = 0b1000'0000,
             tx_complete_irq_enable = 0b0100'0000,
             data_empty_irq_enable  = 0b0010'0000,
@@ -31,7 +31,7 @@ namespace AvrSupport::Serial::Native {
             ninth_rx_bit           = 0b0000'0010,
             ninth_tx_bit           = 0b0000'0001,
         };
-        enum class ControlStatusCMask : uint8_t {
+        enum class ControlCMask : uint8_t {
             usart_mode     = 0b11'00'0000,
             parity_mode    = 0b00'11'0000,
             stop_bits      = 0b00'00'1000,
@@ -57,11 +57,11 @@ namespace AvrSupport::Serial::Native {
 
         PortLib::Register8
             data,
-            control_status_a,
-            control_status_b,
-            control_status_c,
-            baud_rate_low,
-            baud_rate_high;
+            control_a,
+            control_b,
+            control_c,
+            baud_l,
+            baud_h;
 
     public:
         enum class CharSize : uint8_t {
@@ -76,10 +76,10 @@ namespace AvrSupport::Serial::Native {
             uint8_t const
                 high_bit( static_cast<uint8_t>(size) & CHAR_SIZE_HIGH_MASK),
                 low_bits((static_cast<uint8_t>(size) & CHAR_SIZE_LOW_MASK) << CHAR_SIZE_LOW_OFFSET);
-            control_status_b &= ~static_cast<uint8_t>(ControlStatusBMask::char_size_high);
-            control_status_c &= ~static_cast<uint8_t>(ControlStatusCMask::char_size_low);
-            control_status_b |= high_bit;
-            control_status_c |= low_bits;
+            control_b &= ~static_cast<uint8_t>(ControlBMask::char_size_high);
+            control_c &= ~static_cast<uint8_t>(ControlCMask::char_size_low);
+            control_b |= high_bit;
+            control_c |= low_bits;
             return *this;
         }
 
@@ -91,18 +91,59 @@ namespace AvrSupport::Serial::Native {
             PortLib::Register8 ubrrnl,
             PortLib::Register8 ubrrnh
         ) :
-            data            {udrn  },
-            control_status_a{ucsrna},
-            control_status_b{ucsrnb},
-            control_status_c{ucsrnc},
-            baud_rate_low   {ubrrnl},
-            baud_rate_high  {ubrrnh}
+            data     {udrn  },
+            control_a{ucsrna},
+            control_b{ucsrnb},
+            control_c{ucsrnc},
+            baud_l   {ubrrnl},
+            baud_h   {ubrrnh}
         {}
 
-        Usart & set_baud_rate(uint16_t rate) {
-            baud_rate_low  = rate & 0xFF;
-            baud_rate_high = rate >> 8;
+        Usart & set_baud_rate(uint32_t const rate, uint32_t const f_cpu) {
+            uint16_t baud_setting = (f_cpu / 16) / rate;
+            baud_l = static_cast<uint8_t>(baud_setting & 0xFF);
+            baud_h = static_cast<uint8_t>(baud_setting >> 8);
             return *this;
+        }
+
+        template<typename MaskEnum>
+        void set_config(
+            PortLib::Register8 & reg,
+            MaskEnum const mask,
+            bool const active
+        ) {
+            if (active) reg |=  static_cast<uint8_t>(mask);
+            else        reg &= ~static_cast<uint8_t>(mask);
+        }
+
+        Usart & set_tx_rx(bool const tx_active, bool const rx_active) {
+            set_config(control_b, ControlBMask::tx_enable, tx_active);
+            set_config(control_b, ControlBMask::rx_enable, rx_active);
+            
+            // Required?
+            asm("nop");
+            asm("nop");
+
+            return *this;
+        }
+
+        bool is_writing() {
+            return !(control_a & static_cast<uint8_t>(ControlAMask::data_reg_empty));
+        }
+
+        uint8_t read_byte() {
+            while (!(control_a & static_cast<uint8_t>(ControlAMask::receive_complete)));
+            return data;
+        }
+
+        Usart & write_byte(uint8_t const value) {
+            data = value;
+            return *this;
+        }
+
+        Usart & sync_write_byte(uint8_t const value) {
+            while (is_writing());
+            return write_byte(value);
         }
     };
 }

@@ -2,6 +2,7 @@
 #define AVRSUPPORT_SERIAL_USI_SPI_H
 
 #include <portlib/register.hpp>
+#include <serial/interface/spi.hpp>
 #include <serial/usi/base.hpp>
 
 namespace AvrSupport::Serial::Usi {
