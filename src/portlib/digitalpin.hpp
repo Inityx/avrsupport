@@ -5,7 +5,7 @@
 #include <portlib/digitalport.hpp>
 #include <utility/stddef.hpp>
 
-namespace AvrSupport::PortLib {
+namespace avrsupport::portlib {
     /// I/O for a single digital pin
     struct DigitalPin {
     protected:
@@ -16,8 +16,8 @@ namespace AvrSupport::PortLib {
         DigitalPin(
             DigitalPort &port,
             DigitalPort::PinIndex const index,
-            Utility::IoDirection const direction = Utility::IoDirection::in,
-            Utility::LogicLevel const level = Utility::LogicLevel::low
+            utility::IoDirection const direction = utility::IoDirection::in,
+            utility::LogicLevel const level = utility::LogicLevel::low
         ) :
             port{port},
             bitmask{static_cast<uint8_t>(1<<index)}
@@ -26,8 +26,8 @@ namespace AvrSupport::PortLib {
             set(level);
         }
 
-        Utility::LogicLevel get() const {
-            return static_cast<Utility::LogicLevel>((port.pinx & bitmask) != 0);
+        utility::LogicLevel get() const {
+            return static_cast<utility::LogicLevel>((port.pinx & bitmask) != 0);
         }
 
         DigitalPin & set_out()  { port.ddrx  |=  bitmask; return *this; }
@@ -41,7 +41,7 @@ namespace AvrSupport::PortLib {
             return *this;
         }
 
-        DigitalPin & set(Utility::LogicLevel const level) {
+        DigitalPin & set(utility::LogicLevel const level) {
             return set(static_cast<bool>(level));
         }
     };

@@ -6,11 +6,11 @@
 #include <utility/array.hpp>
 #include <utility/bytewise.hpp>
 
-namespace AvrSupport::Peripheral {
+namespace avrsupport::peripheral {
     /// A latching or non-latching parallel-output shift register driver.
     struct ShiftRegister {
     private:
-        PortLib::DigitalPin
+        portlib::DigitalPin
             & data,
             & shift_clock,
             * const storage_clock,
@@ -24,11 +24,11 @@ namespace AvrSupport::Peripheral {
          * functionality. Omit `storage_clock` for non-latching shift registers.
          */
         ShiftRegister(
-            PortLib::DigitalPin & data,
-            PortLib::DigitalPin & shift_clock,
-            PortLib::DigitalPin * const storage_clock = nullptr,
-            PortLib::DigitalPin * const master_reset = nullptr,
-            PortLib::DigitalPin * const output_enable = nullptr
+            portlib::DigitalPin & data,
+            portlib::DigitalPin & shift_clock,
+            portlib::DigitalPin * const storage_clock = nullptr,
+            portlib::DigitalPin * const master_reset = nullptr,
+            portlib::DigitalPin * const output_enable = nullptr
         ) : 
             data         {data},
             shift_clock  {shift_clock},
@@ -101,9 +101,9 @@ namespace AvrSupport::Peripheral {
         }
 
         /// Shift in a struct or primitive, LSB first.
-        template<Utility::Endian ENDIAN, typename Type>
+        template<utility::Endian ENDIAN, typename Type>
         void shift_up(Type const & value) {
-            using each_byte = Utility::BytewiseConst<Type const, ENDIAN>;
+            using each_byte = utility::BytewiseConst<Type const, ENDIAN>;
 
             for (auto & byte : each_byte{value})
                 shift_up_unlatched(byte);
@@ -111,9 +111,9 @@ namespace AvrSupport::Peripheral {
             latch();
         }
         /// Shift in a struct or primitive, MSB first.
-        template<Utility::Endian ENDIAN, typename Type>
+        template<utility::Endian ENDIAN, typename Type>
         void shift_down(Type const & value) {
-            using each_byte = Utility::BytewiseConst<Type const, ENDIAN>;
+            using each_byte = utility::BytewiseConst<Type const, ENDIAN>;
 
             for (auto & byte : each_byte{value})
                 shift_down_unlatched(byte);

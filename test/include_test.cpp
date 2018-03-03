@@ -14,8 +14,8 @@
 
 #include <serial/interface/spi.hpp>
 
-#include <serial/native/spi.hpp>
-#include <serial/native/usart.hpp>
+#include <serial/usart/spi.hpp>
+#include <serial/usart/usart.hpp>
 
 #include <serial/usi/base.hpp>
 #include <serial/usi/spi.hpp>

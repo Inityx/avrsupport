@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-namespace AvrSupport::Peripheral {
+namespace avrsupport::peripheral {
     /// A rotary encoder driver
     struct RotaryEncoder {
     private:

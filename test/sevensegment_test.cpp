@@ -1,9 +1,9 @@
 #include <cassert>
 #include <mapping/sevensegment.hpp>
 
-using namespace AvrSupport;
-using namespace Mapping;
-using Utility::Array;
+using namespace avrsupport;
+using namespace mapping;
+using utility::Array;
 using SSM = SevenSegmentMap;
 
 void map_digits_test() {

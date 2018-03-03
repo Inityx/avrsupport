@@ -5,8 +5,8 @@
 #include <assert.h>
 #include <vector>
 
-using namespace AvrSupport::Utility;
-using namespace Arithmetic;
+using namespace avrsupport::utility;
+using namespace arithmetic;
 
 void within_test() {
     constexpr Array<int32_t, 2> r{2,4};

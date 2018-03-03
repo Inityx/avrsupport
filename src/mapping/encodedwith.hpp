@@ -6,7 +6,7 @@
 #include <utility/cstring.hpp>
 #include <utility/stddef.hpp>
 
-namespace AvrSupport::Mapping {
+namespace avrsupport::mapping {
     /**
      * A base iterator adapter for encoding C strings.
      * `Map` must define a `Map::Encoding` character type and implement
@@ -20,7 +20,7 @@ namespace AvrSupport::Mapping {
         using Encoding = typename Map::Encoding;
 
         /// A C string iterator that maps encodings on dereference.
-        struct Iter : public Utility::BasePointerIterator<InputType, Iter> {
+        struct Iter : public utility::BasePointerIterator<InputType, Iter> {
             /// Dereference
             Encoding constexpr operator* () const {
                 return Map::ascii(*(this->state));
@@ -32,18 +32,18 @@ namespace AvrSupport::Mapping {
         constexpr EncodedWith(InputType * const string) : string{string} {}
 
         constexpr Iter begin() const { return Iter{string}; }
-        constexpr Iter end()   const { return Iter{Utility::CString::end(string)}; }
+        constexpr Iter end()   const { return Iter{utility::CString::end(string)}; }
 
         /// `constexpr` string encoding.
-        template<Utility::avr_size_t COUNT>
-        constexpr static Utility::Array<Encoding, COUNT> collected(
+        template<utility::avr_size_t COUNT>
+        constexpr static utility::Array<Encoding, COUNT> collected(
             InputType string[],
             char const filler = ' '
         ) {
             // String must fit in array
-            assert(Utility::CString::length(string) <= COUNT);
+            assert(utility::CString::length(string) <= COUNT);
 
-            Utility::Array<Encoding, COUNT> collector{0};
+            utility::Array<Encoding, COUNT> collector{0};
             Encoding * current{&collector[0]};
 
             for (Encoding character : EncodedWith<Map>{string})

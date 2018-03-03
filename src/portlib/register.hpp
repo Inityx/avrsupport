@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-namespace AvrSupport::PortLib {
+namespace avrsupport::portlib {
     /// Generic variable-size register type
     template<typename RegisterSize>
     using Register = volatile RegisterSize &;

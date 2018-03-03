@@ -1,13 +1,13 @@
-#ifndef AVRSUPPORT_SERIAL_NATIVE_SPI_H
-#define AVRSUPPORT_SERIAL_NATIVE_SPI_H
+#ifndef AVRSUPPORT_SERIAL_USART_SPI_H
+#define AVRSUPPORT_SERIAL_USART_SPI_H
 
 #include <portlib/register.hpp>
 #include <utility/bytewise.hpp>
 
-namespace AvrSupport::Serial::Native {
-    /// Native %Serial %Peripheral Interface (SPI) driver
-    /// @see Usi::Spi
-    struct Spi : Interface::Spi<Spi> {
+namespace avrsupport::serial::usart {
+    /// native %serial %Peripheral interface (SPI) driver
+    /// @see usi::Spi
+    struct Spi : interface::Spi<Spi> {
     private:
         enum struct ControlMask : uint8_t {
             spi_irq_enable = 0b1000'0000,
@@ -24,7 +24,7 @@ namespace AvrSupport::Serial::Native {
             double_speed   = 0b0000'0001,
         };
 
-        PortLib::Register8
+        portlib::Register8
             control,
             status,
             data;
@@ -33,9 +33,9 @@ namespace AvrSupport::Serial::Native {
         enum Role : uint8_t { master, slave };
 
         constexpr Spi(
-            PortLib::Register8 spcrn,
-            PortLib::Register8 spsrn,
-            PortLib::Register8 spdrn
+            portlib::Register8 spcrn,
+            portlib::Register8 spsrn,
+            portlib::Register8 spdrn
         ) :
             control{spcrn},
             status{spsrn},

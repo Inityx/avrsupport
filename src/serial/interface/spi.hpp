@@ -5,7 +5,7 @@
 #include <utility/iterator.hpp>
 #include <utility/stddef.hpp>
 
-namespace AvrSupport::Serial::Interface {
+namespace avrsupport::serial::interface {
     template<typename SelfClass>
     struct Spi {
         // Virtual methods
@@ -15,13 +15,13 @@ namespace AvrSupport::Serial::Interface {
         virtual SelfClass & swap_byte_into(uint8_t       & value) = 0;
         virtual bool        byte_ready    (                     ) = 0;
 
-        template<Utility::avr_size_t BUFFER_SIZE>
+        template<utility::avr_size_t BUFFER_SIZE>
         SelfClass & read_bytes_into(
-            Utility::Array<uint8_t, BUFFER_SIZE> & buffer,
-            Utility::avr_size_t const count
+            utility::Array<uint8_t, BUFFER_SIZE> & buffer,
+            utility::avr_size_t const count
         ) {
-            using Utility::Subslice;
-            auto const min_size = Utility::Arithmetic::min<Utility::avr_size_t const>;
+            using utility::Subslice;
+            auto const min_size = utility::arithmetic::min<utility::avr_size_t const>;
 
             for (auto & byte : Subslice{buffer, min_size(count, BUFFER_SIZE)}) {
                 while(!byte_ready());
@@ -31,9 +31,9 @@ namespace AvrSupport::Serial::Interface {
             return byte_ready;
         }
 
-        template<Utility::avr_size_t BUFFER_SIZE>
-        bool read_string(Utility::Array<char, BUFFER_SIZE> & buffer) {
-            using Utility::Subslice;
+        template<utility::avr_size_t BUFFER_SIZE>
+        bool read_string(utility::Array<char, BUFFER_SIZE> & buffer) {
+            using utility::Subslice;
 
             for (auto & character : Subslice{buffer, BUFFER_SIZE - 1}) {
                 while(!byte_ready());

@@ -1,10 +1,10 @@
-#ifndef ITERATOR_H
-#define ITERATOR_H
+#ifndef AVRSUPPORT_UTILITY_ITERATOR_H
+#define AVRSUPPORT_UTILITY_ITERATOR_H
 
 #include <utility/arithmetic.hpp>
 #include <utility/stddef.hpp>
 
-namespace AvrSupport::Utility {
+namespace avrsupport::utility {
     // TODO: Unit test
 
     /** A base iterator.
@@ -64,16 +64,16 @@ namespace AvrSupport::Utility {
         constexpr operator Type()  const { return this->state; } ///< Type coercion
 
         constexpr bool operator==(SelfClass const & rhs) const {
-            if constexpr (Arithmetic::abs(STEP) == 1)
+            if constexpr (arithmetic::abs(STEP) == 1)
                 return this->state == rhs.state;
             else
-                return Arithmetic::abs_diff(this->state, rhs.state) < Arithmetic::abs(STEP);
+                return arithmetic::abs_diff(this->state, rhs.state) < arithmetic::abs(STEP);
         }
         constexpr bool operator!=(SelfClass const & rhs) const {
-            if constexpr (Arithmetic::abs(STEP) == 1)
+            if constexpr (arithmetic::abs(STEP) == 1)
                 return this->state != rhs.state;
             else
-                return Arithmetic::abs_diff(this->state, rhs.state) >= Arithmetic::abs(STEP);
+                return arithmetic::abs_diff(this->state, rhs.state) >= arithmetic::abs(STEP);
         }
 
         constexpr SelfClass & operator++()                     { this->state += STEP; return *this; }

@@ -2,7 +2,7 @@
 
 #include <portlib/digitalport.hpp>
 
-using AvrSupport::PortLib::DigitalPort;
+using avrsupport::portlib::DigitalPort;
 
 volatile uint8_t PINA{0b110};
 volatile uint8_t PORTA{0};

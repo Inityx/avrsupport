@@ -4,16 +4,16 @@
 #include <portlib/register.hpp>
 #include <serial/usi/base.hpp>
 
-namespace AvrSupport::Serial::Usi {
-    /// USI-powered Two-Wire Interface (TWI/I2C) driver
-    struct Twi : public Usi::Base<Twi> {
+namespace avrsupport::serial::usi {
+    /// USI-powered Two-Wire interface (TWI/I2C) driver
+    struct Twi : public usi::Base<Twi> {
         Twi(
-            PortLib::Register8 usidr,
-            PortLib::Register8 usibr,
-            PortLib::Register8 usisr,
-            PortLib::Register8 usicr
+            portlib::Register8 usidr,
+            portlib::Register8 usibr,
+            portlib::Register8 usisr,
+            portlib::Register8 usicr
         ) :
-            Usi::Base<Twi>{usidr, usibr, usisr, usicr}
+            usi::Base<Twi>{usidr, usibr, usisr, usicr}
         {}
 
         Twi & initialize() {

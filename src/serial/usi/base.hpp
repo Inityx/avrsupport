@@ -3,8 +3,8 @@
 
 #include <portlib/register.hpp>
 
-namespace AvrSupport::Serial::Usi {
-    /** A base Universal %Serial Interface (USI) driver.
+namespace avrsupport::serial::usi {
+    /** A base Universal %serial interface (USI) driver.
      * This class is used to implement other serial interfaces.
      * @tparam SelfClass The derived class ([CRTP](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern))
      */
@@ -14,15 +14,15 @@ namespace AvrSupport::Serial::Usi {
         enum struct ControlMask : uint8_t {
             start_cond_irq = 0b10'00'00'00, ///< Start condition interrupt enable
             overflow_irq   = 0b01'00'00'00, ///< Counter overflow interrupt enable
-            wire_mode      = 0b00'11'00'00, ///< Wire mode select (Usi::WireMode)
-            clock_source   = 0b00'00'11'00, ///< Clock source select (Usi::ClockSource)
+            wire_mode      = 0b00'11'00'00, ///< Wire mode select (usi::WireMode)
+            clock_source   = 0b00'00'11'00, ///< Clock source select (usi::ClockSource)
             clock_strobe   = 0b00'00'00'10, ///< Clock strobe
             toggle_clock   = 0b00'00'00'01, ///< Toggle clock port pin
         };
 
         static uint8_t const COUNTER_MASK{0b1111};
 
-        PortLib::Register8
+        portlib::Register8
             data,
             buffer,
             status,
@@ -62,10 +62,10 @@ namespace AvrSupport::Serial::Usi {
         }
 
         Base(
-            PortLib::Register8 usidr,
-            PortLib::Register8 usibr,
-            PortLib::Register8 usisr,
-            PortLib::Register8 usicr
+            portlib::Register8 usidr,
+            portlib::Register8 usibr,
+            portlib::Register8 usisr,
+            portlib::Register8 usicr
         ) :
             data   {usidr},
             buffer {usibr},

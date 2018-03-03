@@ -1,10 +1,10 @@
-#ifndef C_STRING_H
-#define C_STRING_H
+#ifndef AVRSUPPORT_UTILITY_C_STRING_H
+#define AVRSUPPORT_UTILITY_C_STRING_H
 
 #include <utility/stddef.hpp>
 
 /// C String helpers
-namespace AvrSupport::Utility::CString {
+namespace avrsupport::utility::CString {
     // Max length must be defined for to prevent compile-time infinite loops
     // Who would ever even want a string this long on an AVR chip
     static avr_size_t const MAX_LENGTH = 1024 * 16;

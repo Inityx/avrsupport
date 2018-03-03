@@ -5,11 +5,11 @@
 
 #include <emulated/multipwm.hpp>
 
-using namespace AvrSupport;
+using namespace avrsupport;
 
-using Utility::Array;
-using PortLib::DigitalPort;
-using Emulated::MultiPwm;
+using utility::Array;
+using portlib::DigitalPort;
+using emulated::MultiPwm;
 
 volatile uint8_t
     PORTA{0x00},

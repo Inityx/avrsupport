@@ -4,8 +4,8 @@
 
 #include <peripheral/rotaryencoder.hpp>
 
-using namespace AvrSupport;
-using Rotary = Peripheral::RotaryEncoder;
+using namespace avrsupport;
+using Rotary = peripheral::RotaryEncoder;
 
 template<std::size_t COUNT>
 using Actions = std::array<std::array<int, 2> const, COUNT> const;

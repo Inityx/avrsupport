@@ -8,35 +8,35 @@
 #include <utility/array.hpp>
 #include <utility/iterator.hpp>
 
-namespace AvrSupport::Emulated {
+namespace avrsupport::emulated {
     /**
      * An emulated multichannel PWM driver with duty cycles out of 255.
      * @tparam COUNT The number of channels
      * @tparam STEP The amount by which the duty cycles are adjusted
      */
-    template<PortLib::DigitalPort::PinIndex COUNT, uint8_t STEP>
+    template<portlib::DigitalPort::PinIndex COUNT, uint8_t STEP>
     struct MultiPwm {
     private:
         struct Channel {
-            PortLib::DigitalPort::PinIndex pin_index;
+            portlib::DigitalPort::PinIndex pin_index;
             uint8_t level;
         };
 
-        PortLib::DigitalPort &port;
-        Utility::Array<Channel, COUNT> channels;
+        portlib::DigitalPort &port;
+        utility::Array<Channel, COUNT> channels;
         Channel * selection{&channels[0]};
         uint8_t counter{0};
         bool active{true};
         
     public:
         MultiPwm( // Can't be constexpr because port is non-const
-            Utility::Array<PortLib::DigitalPort::PinIndex, COUNT> const & pins,
-            Utility::Array<uint8_t,           COUNT> const & levels,
-            PortLib::DigitalPort & port
+            utility::Array<portlib::DigitalPort::PinIndex, COUNT> const & pins,
+            utility::Array<uint8_t,           COUNT> const & levels,
+            portlib::DigitalPort & port
         ) :
             port{port}
         {
-            for (auto i : Utility::Range{COUNT})
+            for (auto i : utility::Range{COUNT})
                 channels[i] = Channel{pins[i], levels[i]};
         }
 
@@ -47,12 +47,12 @@ namespace AvrSupport::Emulated {
         }
 
         /// Set desired duty cycle for a channel, 0 to 255
-        void set_level(PortLib::DigitalPort::PinIndex index, uint8_t value) {
+        void set_level(portlib::DigitalPort::PinIndex index, uint8_t value) {
             channels[index].level = value;
         }
         
         /// Get the current duty cycle for a pin, 0 to 255
-        uint8_t get_level(PortLib::DigitalPort::PinIndex index) const {
+        uint8_t get_level(portlib::DigitalPort::PinIndex index) const {
             return channels[index].level;
         }
         
@@ -94,7 +94,7 @@ namespace AvrSupport::Emulated {
 
         /// Select next channel forward
         void select_next() {
-            Utility::Arithmetic::circular_increment_iterator(channels, selection);
+            utility::arithmetic::circular_increment_iterator(channels, selection);
         }
 
         // Adjust selected channel's duty cycle up by `STEP`

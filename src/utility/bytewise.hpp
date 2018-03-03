@@ -1,5 +1,5 @@
-#ifndef BYTEWISE_H
-#define BYTEWISE_H
+#ifndef AVRSUPPORT_UTILITY_BYTEWISE_H
+#define AVRSUPPORT_UTILITY_BYTEWISE_H
 
 #include <stdint.h>
 
@@ -7,7 +7,7 @@
 #include <utility/stddef.hpp>
 
 /// %Bytewise iteration helpers
-namespace AvrSupport::Utility {
+namespace avrsupport::utility {
     /** A bytewise iterator adapter.
      * This adapter yields an iterator over each byte of a struct or primitive.
      * @tparam SourceType The datatype to be iterated over
@@ -27,7 +27,7 @@ namespace AvrSupport::Utility {
         SourceType & target;
 
     public:
-        struct Iter : public Utility::BasePointerIterator<ByteType, Iter> {
+        struct Iter : public BasePointerIterator<ByteType, Iter> {
             constexpr static avr_ptrdiff_t const INCREMENT{FORWARDS ? 1 : -1};
 
             constexpr Iter & operator++()                           { this->state += INCREMENT      ; return *this; }

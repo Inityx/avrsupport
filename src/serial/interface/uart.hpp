@@ -1,7 +1,7 @@
 #ifndef AVRSUPPORT_SERIAL_INTERFACE_UART_H
 #define AVRSUPPORT_SERIAL_INTERFACE_UART_H
 
-namespace AvrSupport::Serial::Interface {
+namespace avrsupport::serial::interface {
     template<typename SelfClass>
     struct Uart {
         enum struct StopBits : uint8_t {

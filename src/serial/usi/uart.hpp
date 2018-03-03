@@ -4,17 +4,17 @@
 #include <portlib/register.hpp>
 #include <serial/usi/base.hpp>
 
-namespace AvrSupport::Serial::Usi {
+namespace avrsupport::serial::usi {
     /// USI-powered Universal Async Receiver/Transmitter (UART) driver
     /// @see Serial::Uart
-    struct Uart : public Usi::Base<Uart> {
+    struct Uart : public usi::Base<Uart> {
         Uart(
-            PortLib::Register8 usidr,
-            PortLib::Register8 usibr,
-            PortLib::Register8 usisr,
-            PortLib::Register8 usicr
+            portlib::Register8 usidr,
+            portlib::Register8 usibr,
+            portlib::Register8 usisr,
+            portlib::Register8 usicr
         ) :
-            Usi::Base<Uart>{usidr, usibr, usisr, usicr}
+            usi::Base<Uart>{usidr, usibr, usisr, usicr}
         {}
     };
 }

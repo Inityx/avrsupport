@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-namespace AvrSupport::Utility {
+namespace avrsupport::utility {
     using avr_ptrdiff_t = int16_t;
     using avr_size_t = uint16_t;
 

@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <portlib/register.hpp>
 
-namespace AvrSupport::PortLib {
+namespace avrsupport::portlib {
     /**
      * Built-in timer driver
      * @tparam TimerSize %Timer counter register type (e.g. uint8_t)

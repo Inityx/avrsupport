@@ -6,11 +6,11 @@
 
 #include <emulated/pwm.hpp>
 
-using namespace AvrSupport;
+using namespace avrsupport;
 
-using PortLib::DigitalPort;
-using PortLib::DigitalPin;
-using Emulated::Pwm;
+using portlib::DigitalPort;
+using portlib::DigitalPin;
+using emulated::Pwm;
 
 volatile uint8_t
     PORTA{0x00},

@@ -6,7 +6,7 @@
 #include <vector>
 #include <cstdint>
 
-using namespace AvrSupport::Utility;
+using namespace avrsupport::utility;
 
 constexpr int sum(int const start, int const end) {
     int accum{0};

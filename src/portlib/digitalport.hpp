@@ -4,7 +4,7 @@
 #include <portlib/register.hpp>
 #include <utility/stddef.hpp>
 
-namespace AvrSupport::PortLib {
+namespace avrsupport::portlib {
     /// I/O for a full digital port
     struct DigitalPort {
         using PinIndex = uint8_t; ///< Type for indexing pins
@@ -39,7 +39,7 @@ namespace AvrSupport::PortLib {
             return *this;
         }
 
-        DigitalPort & set_at(PinIndex const index, Utility::LogicLevel const level) {
+        DigitalPort & set_at(PinIndex const index, utility::LogicLevel const level) {
             return set_at(index, static_cast<bool>(level));
         }
     };

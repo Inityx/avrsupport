@@ -4,8 +4,8 @@
 #include <utility/array.hpp>
 #include <utility/stddef.hpp>
 
-/// %Arithmetic helpers
-namespace AvrSupport::Utility::Arithmetic {
+/// %arithmetic helpers
+namespace avrsupport::utility::arithmetic {
     /// Inclusive range check
     template<typename Type>
     constexpr bool within(Type const & value, Array<Type, 2> const range) {

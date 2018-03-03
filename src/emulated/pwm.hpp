@@ -5,7 +5,7 @@
 
 #include <portlib/digitalpin.hpp>
 
-namespace AvrSupport::Emulated {
+namespace avrsupport::emulated {
     /// An emulated single channel PWM driver with duty cycles out of 255.
     struct Pwm {
     private:
@@ -14,9 +14,9 @@ namespace AvrSupport::Emulated {
     public:
         uint8_t level;
         bool active{true};
-        PortLib::DigitalPin & pin;
+        portlib::DigitalPin & pin;
 
-        Pwm(PortLib::DigitalPin & pin, uint8_t const level)
+        Pwm(portlib::DigitalPin & pin, uint8_t const level)
             : pin{pin}, level{level} {}
 
         /// Advance one tick in PWM timing

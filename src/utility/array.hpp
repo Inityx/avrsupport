@@ -3,7 +3,7 @@
 
 #include <utility/stddef.hpp>
 
-namespace AvrSupport::Utility {
+namespace avrsupport::utility {
     /// A `std::array` replacement
     template<typename Type, avr_size_t SIZE>
     struct Array {

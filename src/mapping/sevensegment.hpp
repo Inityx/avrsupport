@@ -8,14 +8,14 @@
 #include <utility/arithmetic.hpp>
 #include <utility/stddef.hpp>
 
-namespace AvrSupport::Mapping {
+namespace avrsupport::mapping {
     /// Seven-segment display character mappings
     struct SevenSegmentMap {
         using Encoding = uint8_t; ///< Segments `.abcdefg`
 
     private:
-        constexpr static Utility::avr_ptrdiff_t ALPHA_OFFSET = 10;
-        constexpr static Utility::Array<Encoding, 36> const CHARS{
+        constexpr static utility::avr_ptrdiff_t ALPHA_OFFSET = 10;
+        constexpr static utility::Array<Encoding, 36> const CHARS{
             //. abcdefg
             0b0'1111110, // 0
             0b0'0110000, // 1
@@ -76,7 +76,7 @@ namespace AvrSupport::Mapping {
         }
 
         constexpr static Encoding ascii(char const c) {
-            using Utility::Arithmetic::within;
+            using utility::arithmetic::within;
 
             if (within(c, {'0', '9'})) return digit(c - '0');
             if (within(c, {'a', 'z'})) return CHARS[c - 'a' + ALPHA_OFFSET];

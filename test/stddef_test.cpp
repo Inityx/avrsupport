@@ -2,7 +2,7 @@
 
 #include <utility/stddef.hpp>
 
-using namespace AvrSupport::Utility;
+using namespace avrsupport::utility;
 
 template<typename Enum>
 constexpr void a_b(Enum const e, bool const b) {

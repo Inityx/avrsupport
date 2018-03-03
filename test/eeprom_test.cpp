@@ -7,9 +7,9 @@
 #include <cstdint>
 #include <cassert>
 
-using namespace AvrSupport;
+using namespace avrsupport;
 
-Utility::avr_size_t const EEPROM_SIZE{512};
+utility::avr_size_t const EEPROM_SIZE{512};
 
 uint8_t EEDR, EECR;
 uint16_t EEAR;
@@ -19,10 +19,10 @@ struct MyStruct {
     uint8_t thingy;
 };
 
-using Eeprom = PortLib::Eeprom;
-using BufferEeprom = PortLib::BufferEeprom<EEPROM_SIZE>;
+using Eeprom = portlib::Eeprom;
+using BufferEeprom = portlib::BufferEeprom<EEPROM_SIZE>;
 template<typename Type>
-using ValueEeprom = PortLib::ValueEeprom<EEPROM_SIZE, Type>;
+using ValueEeprom = portlib::ValueEeprom<EEPROM_SIZE, Type>;
 
 template<typename Enum>
 void assert_enum(Enum e, uint8_t v) {
