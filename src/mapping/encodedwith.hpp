@@ -32,7 +32,7 @@ namespace avrsupport::mapping {
         constexpr EncodedWith(InputType * const string) : string{string} {}
 
         constexpr Iter begin() const { return Iter{string}; }
-        constexpr Iter end()   const { return Iter{utility::CString::end(string)}; }
+        constexpr Iter end()   const { return Iter{utility::cstring::end(string)}; }
 
         /// `constexpr` string encoding.
         template<utility::avr_size_t COUNT>
@@ -41,7 +41,7 @@ namespace avrsupport::mapping {
             char const filler = ' '
         ) {
             // String must fit in array
-            assert(utility::CString::length(string) <= COUNT);
+            assert(utility::cstring::length(string) <= COUNT);
 
             utility::Array<Encoding, COUNT> collector{0};
             Encoding * current{&collector[0]};
