@@ -2,6 +2,7 @@
 #define AVRSUPPORT_SERIAL_USART_BASE_H
 
 #include <portlib/register.hpp>
+#include <utility/stddef.hpp>
 
 namespace avrsupport::serial::usart {
     struct Base {
