@@ -15,7 +15,7 @@ endif
 ANSI_CRBL:=\u001b[1K\r
 
 # Structure
-MODULES:=$(shell find src/* -type d | sed 's/^src\/\?//g')
+MODULES:=emulated mapping peripheral portlib serial/interface serial/usart serial/usi utility
 
 # Docs
 DOXYGEN:=doxygen
@@ -64,18 +64,14 @@ test/build/%.out: test/%.cpp
 
 test_clean:
 	@echo -e "$(ANSI_INFO)### Clean tests$(ANSI_RS)"
-	@for item in $(TEST_BINS); do \
-		echo " RM $$item"; \
-        rm -f "$$item"; \
-	done
+	@echo " RM test/build/*"
+	@rm -rf test/build/*
 
 # Clean
 clean: test_clean
 	@echo -e "$(ANSI_INFO)### Clean build$(ANSI_RS)"
-	@for item in $(INCLUDE_DIRS); do \
-	    echo " RM $$item"; \
-	    rm -rf $$item; \
-    done
+	@echo " RM include/*"
+	@rm -rf include/*
 
 # Configure
 configure: .nvimrc
