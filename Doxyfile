@@ -14,7 +14,7 @@
 # Project related configuration options
 #---------------------------------------------------------------------------
 
-PROJECT_NAME           = "AvrSupport"
+PROJECT_NAME           = "AVRSupport"
 PROJECT_BRIEF          = "A C++17 support library for AVR Microcontrollers"
 PROJECT_NUMBER         = "0.0.1"
 PROJECT_LOGO           = # max 200x50px
