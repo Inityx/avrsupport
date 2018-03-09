@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #include <portlib/register.hpp>
+#include <portlib/interrupt.hpp>
 #include <utility/bytewise.hpp>
 #include <utility/stddef.hpp>
 
@@ -55,11 +56,13 @@ namespace avrsupport::portlib {
             address = location;
             data = byte;
 
-            uint8_t cfg_and_write = (control & CONFIG_MASK) | static_cast<uint8_t>(ControlMask::write);
-            volatile uint8_t * control_cached{&control};
-            // The prior caching is necessary because the second control write
+            // This caching is necessary because the second control write
             // must be within 4 CPU instructions of the first, and avr-gcc can't
             // currently substitute static literal references at compile time
+            uint8_t cfg_and_write = (control & CONFIG_MASK) | static_cast<uint8_t>(ControlMask::write);
+            volatile uint8_t * control_cached{&control};
+
+            InterruptGuard guard;
             *control_cached = static_cast<uint8_t>(ControlMask::master_write);
             *control_cached = cfg_and_write;
         }

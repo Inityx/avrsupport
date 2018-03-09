@@ -1,6 +1,8 @@
 #ifndef AVRSUPPORT_SERIAL_INTERFACE_UART_H
 #define AVRSUPPORT_SERIAL_INTERFACE_UART_H
 
+#include <utility/iterator.hpp>
+
 namespace avrsupport::serial::interface {
     template<typename SelfClass>
     struct Uart {
