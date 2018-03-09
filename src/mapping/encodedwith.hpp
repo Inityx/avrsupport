@@ -7,6 +7,14 @@
 #include <utility/stddef.hpp>
 
 namespace avrsupport::mapping {
+    /// A C string iterator that maps encodings on dereference.
+    template<typename Map>
+    struct StringMapper : public utility::iterator::PointerIter<char const, StringMapper<Map>> {
+        typename Map::Encoding constexpr operator* () const {
+            return Map::ascii(*(this->state));
+        }
+    };
+
     /**
      * A base iterator adapter for encoding C strings.
      * `Map` must define a `Map::Encoding` character type and implement
@@ -15,38 +23,23 @@ namespace avrsupport::mapping {
      * @see SevenSegmentMap
      */
     template<typename Map>
-    struct EncodedWith {
-        using InputType = char const;
-        using Encoding = typename Map::Encoding;
-
-        /// A C string iterator that maps encodings on dereference.
-        struct Iter : public utility::BasePointerIterator<InputType, Iter> {
-            /// Dereference
-            Encoding constexpr operator* () const {
-                return Map::ascii(*(this->state));
-            }
-        };
-
-        InputType * string;
-
-        constexpr EncodedWith(InputType * const string) : string{string} {}
-
-        constexpr Iter begin() const { return Iter{string}; }
-        constexpr Iter end()   const { return Iter{utility::cstring::end(string)}; }
+    struct EncodedWith : utility::CStringChars<char const, StringMapper<Map>> {
+        constexpr EncodedWith(char const * const string) :
+            utility::CStringChars<char const, StringMapper<Map>>{string} {}
 
         /// `constexpr` string encoding.
         template<utility::avr_size_t COUNT>
-        constexpr static utility::Array<Encoding, COUNT> collected(
-            InputType string[],
+        constexpr static utility::Array<typename Map::Encoding, COUNT> collected(
+            char const * const string,
             char const filler = ' '
         ) {
             // String must fit in array
             assert(utility::cstring::length(string) <= COUNT);
 
-            utility::Array<Encoding, COUNT> collector{0};
-            Encoding * current{&collector[0]};
+            utility::Array<typename Map::Encoding, COUNT> collector{0};
+            typename Map::Encoding * current{&collector[0]};
 
-            for (Encoding character : EncodedWith<Map>{string})
+            for (typename Map::Encoding character : EncodedWith<Map>{string})
                 *(current++) = character;
 
             while (current != collector.end())

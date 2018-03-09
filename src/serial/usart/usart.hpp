@@ -27,7 +27,7 @@ namespace avrsupport::serial::usart {
         template<typename MaskEnum> bool get_status(
             portlib::Register8 & reg,
             MaskEnum const mask
-        ) {
+        ) const {
             return reg & static_cast<uint8_t>(mask);
         }
 
@@ -74,7 +74,7 @@ namespace avrsupport::serial::usart {
             return *this;
         }
 
-        Usart & set_stop_bits(StopBits const bits) {
+        Usart & set_stop_bits(StopBits const bits) override {
             bool setting;
             switch (bits) {
                 case StopBits::one: setting = false; break;
@@ -101,26 +101,21 @@ namespace avrsupport::serial::usart {
         }
 
         // Status methods
-        bool is_writable()      { return get_status(control_a, ControlAMask::data_reg_empty  ); }
-        bool is_data_received() { return get_status(control_a, ControlAMask::receive_complete); }
-        bool is_frame_error()   { return get_status(control_a, ControlAMask::frame_error     ); }
-        bool is_data_overrun()  { return get_status(control_a, ControlAMask::data_overrun    ); }
-        bool is_parity_error()  { return get_status(control_a, ControlAMask::parity_error    ); }
+        bool is_writable()      const override { return get_status(control_a, ControlAMask::data_reg_empty  ); }
+        bool is_data_received() const          { return get_status(control_a, ControlAMask::receive_complete); }
+        bool is_frame_error()   const          { return get_status(control_a, ControlAMask::frame_error     ); }
+        bool is_data_overrun()  const          { return get_status(control_a, ControlAMask::data_overrun    ); }
+        bool is_parity_error()  const          { return get_status(control_a, ControlAMask::parity_error    ); }
 
         // Usage methods
-        uint8_t read_byte() {
+        uint8_t read_byte() const override {
             while (!is_data_received());
             return data;
         }
 
-        Usart & write_byte(uint8_t const value) {
+        Usart & write_byte(uint8_t const value) override {
             data = value;
             return *this;
-        }
-
-        Usart & sync_write_byte(uint8_t const value) {
-            while (!is_writable());
-            return write_byte(value);
         }
     };
 }

@@ -27,7 +27,7 @@ namespace avrsupport::utility {
         SourceType & target;
 
     public:
-        struct Iter : public BasePointerIterator<ByteType, Iter> {
+        struct Iter : public iterator::PointerIter<ByteType, Iter> {
             constexpr static avr_ptrdiff_t const INCREMENT{FORWARDS ? 1 : -1};
 
             constexpr Iter & operator++()                           { this->state += INCREMENT      ; return *this; }

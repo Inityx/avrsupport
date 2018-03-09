@@ -1,4 +1,5 @@
 #include <utility/iterator.hpp>
+#include <utility/cstring.hpp>
 #include <utility/array.hpp>
 
 #include <cstdio>
@@ -8,18 +9,17 @@
 
 using namespace avrsupport::utility;
 
-constexpr int sum(int const start, int const end) {
-    int accum{0};
-    for(auto value : Range<int>{start, end})
-        accum += value;
-    return accum;
-}
-
-void constexpr_test() {
-    static_assert(sum(3, 10) == 42);
-}
-
 void range_test() {
+    constexpr auto range_sum{
+        [=](int const start, int const end) -> int {
+            int accum{0};
+            for(auto value : Range<int>{start, end})
+                accum += value;
+            return accum;
+        }
+    };
+    static_assert(range_sum(3, 10) == 42);
+
     std::vector< int8_t> acc_signed;
     std::vector<uint8_t> acc_unsigned;
     std::vector<uint8_t> correct_default    { 0, 1, 2, 3, 4 };
@@ -60,7 +60,6 @@ void range_test() {
     assert(acc_signed == correct_bw_step);
 }
 
-
 void subslice_test() {
     constexpr static Array<uint8_t, 7> const source { 2, 5, 6, 7, 6, 4, 3 };
     constexpr Subslice const
@@ -75,7 +74,6 @@ void subslice_test() {
 
 int main() {
     range_test();
-    constexpr_test();
     subslice_test();
     return 0;
 }
