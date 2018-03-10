@@ -16,29 +16,29 @@ namespace avrsupport::portlib {
 
         /// %Timer prescale type
         enum struct Prescale : uint8_t {
-            off = 0x00,
-            d1,
-            d8,
-            d64,
-            d256,
-            d1024,
-            t0_falling_edge,
-            t0_rising_edge
+            OFF = 0x00,
+            D1,
+            D8,
+            D64,
+            D256,
+            D1024,
+            T0_FALLING_EDGE,
+            T0_RISING_EDGE
         };
         
         /// %Timer mode
         enum struct Mode : uint8_t {
-            normal = 0x00,
-            pwm_phase_correct,
-            clear_on_compare,
-            fast_pwm
+            NORMAL = 0x00,
+            PWM_PHASE_CORRECT,
+            CLEAR_ON_COMPARE,
+            FAST_PWM
         };
 
         /// Interrupt trigger selection
         enum struct Trigger : uint8_t {
-            overflow  = 0b0000'0001,
-            compare_a = 0b0000'0010,
-            compare_b = 0b0000'0100
+            OVERFLOW  = 0b0000'0001,
+            COMPARE_A = 0b0000'0010,
+            COMPARE_B = 0b0000'0100
         };
             
     private:

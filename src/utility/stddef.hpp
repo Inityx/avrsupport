@@ -7,9 +7,9 @@ namespace avrsupport::utility {
     using avr_ptrdiff_t = int16_t;
     using avr_size_t = uint16_t;
 
-    enum struct LogicLevel : bool { low, high };
-    enum struct IoDirection : bool { in, out };
-    enum struct Endian : bool { big, little };
+    enum struct LogicLevel : bool { LOW, HIGH };
+    enum struct IoDirection : bool { IN, OUT };
+    enum struct Endian : bool { BIG, LITTLE };
 }
 
 #endif

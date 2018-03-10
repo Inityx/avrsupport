@@ -17,7 +17,7 @@ namespace avrsupport::serial::usi {
         {}
 
         Twi & initialize() {
-            set_wire_mode(WireMode::two_wire);
+            set_wire_mode(WireMode::TWO_WIRE);
             return *this;
         }
     };

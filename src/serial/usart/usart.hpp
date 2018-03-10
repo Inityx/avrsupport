@@ -34,11 +34,11 @@ namespace avrsupport::serial::usart {
     public:
         // Logical control enums
         enum struct CharSize : uint8_t {
-            five_bit  = 0b000,
-            six_bit   = 0b001,
-            seven_bit = 0b010,
-            eight_bit = 0b011,
-            nine_bit  = 0b111,
+            FIVE_BIT  = 0b000,
+            SIX_BIT   = 0b001,
+            SEVEN_BIT = 0b010,
+            EIGHT_BIT = 0b011,
+            NINE_BIT  = 0b111,
         };
 
         // Constructors
@@ -67,8 +67,8 @@ namespace avrsupport::serial::usart {
                 high_bit( size_num & CHAR_SIZE_HIGH_MASK),
                 low_bits((size_num & CHAR_SIZE_LOW_MASK) << CHAR_SIZE_LOW_OFFSET);
 
-            control_b &= ~static_cast<uint8_t>(ControlBMask::char_size_high);
-            control_c &= ~static_cast<uint8_t>(ControlCMask::char_size_low);
+            control_b &= ~static_cast<uint8_t>(ControlBMask::CHAR_SIZE_HIGH);
+            control_c &= ~static_cast<uint8_t>(ControlCMask::CHAR_SIZE_LOW);
             control_b |= high_bit;
             control_c |= low_bits;
             return *this;
@@ -77,10 +77,10 @@ namespace avrsupport::serial::usart {
         Usart & set_stop_bits(StopBits const bits) override {
             bool setting;
             switch (bits) {
-                case StopBits::one: setting = false; break;
-                case StopBits::two: setting = true;  break;
+                case StopBits::ONE: setting = false; break;
+                case StopBits::TWO: setting = true;  break;
             }
-            set_config(control_c, ControlCMask::stop_bits, setting);
+            set_config(control_c, ControlCMask::STOP_BITS, setting);
             return *this;
         }
 
@@ -92,8 +92,8 @@ namespace avrsupport::serial::usart {
         }
 
         Usart & set_tx_rx(bool const tx_active, bool const rx_active) {
-            set_config(control_b, ControlBMask::tx_enable, tx_active);
-            set_config(control_b, ControlBMask::rx_enable, rx_active);
+            set_config(control_b, ControlBMask::TX_ENABLE, tx_active);
+            set_config(control_b, ControlBMask::RX_ENABLE, rx_active);
             
             asm("nop"); asm("nop"); // Required?
 
@@ -101,11 +101,11 @@ namespace avrsupport::serial::usart {
         }
 
         // Status methods
-        bool is_writable()      const override { return get_status(control_a, ControlAMask::data_reg_empty  ); }
-        bool is_data_received() const          { return get_status(control_a, ControlAMask::receive_complete); }
-        bool is_frame_error()   const          { return get_status(control_a, ControlAMask::frame_error     ); }
-        bool is_data_overrun()  const          { return get_status(control_a, ControlAMask::data_overrun    ); }
-        bool is_parity_error()  const          { return get_status(control_a, ControlAMask::parity_error    ); }
+        bool is_writable()      const override { return get_status(control_a, ControlAMask::DATA_REG_EMPTY  ); }
+        bool is_data_received() const          { return get_status(control_a, ControlAMask::RECEIVE_COMPLETE); }
+        bool is_frame_error()   const          { return get_status(control_a, ControlAMask::FRAME_ERROR     ); }
+        bool is_data_overrun()  const          { return get_status(control_a, ControlAMask::DATA_OVERRUN    ); }
+        bool is_parity_error()  const          { return get_status(control_a, ControlAMask::PARITY_ERROR    ); }
 
         // Usage methods
         uint8_t read_byte() const override {

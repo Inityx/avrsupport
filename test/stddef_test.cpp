@@ -11,12 +11,12 @@ constexpr void a_b(Enum const e, bool const b) {
 }
 
 int main() {
-    a_b(LogicLevel::low, false);
-    a_b(LogicLevel::high, true);
+    a_b(LogicLevel::LOW, false);
+    a_b(LogicLevel::HIGH, true);
 
-    a_b(IoDirection::in, false);
-    a_b(IoDirection::out, true);
+    a_b(IoDirection::IN, false);
+    a_b(IoDirection::OUT, true);
     
-    a_b(Endian::big, false);
-    a_b(Endian::little, true);
+    a_b(Endian::BIG, false);
+    a_b(Endian::LITTLE, true);
 }

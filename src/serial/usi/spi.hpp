@@ -19,7 +19,7 @@ namespace avrsupport::serial::usi {
         {}
 
         Spi & initialize() {
-            set_wire_mode(WireMode::three_wire);
+            set_wire_mode(WireMode::THREE_WIRE);
             return *this;
         }
 

@@ -18,7 +18,7 @@ namespace avrsupport::utility {
     struct Bytewise {
     private:
         static_assert(sizeof(ByteType) == 1, "The ByteType must be one byte.");
-        constexpr static bool const FORWARDS{ENDIAN == Endian::big};
+        constexpr static bool const FORWARDS{ENDIAN == Endian::BIG};
         constexpr static avr_ptrdiff_t const
             STRUCT_BEGIN_OFFSET{FORWARDS ? 0 : 1},
             STRUCT_END_OFFSET  {FORWARDS ? 1 : 0},

@@ -2,6 +2,7 @@
 #define AVRSUPPORT_SERIAL_USART_SPI_H
 
 #include <portlib/register.hpp>
+#include <serial/interface/spi.hpp>
 #include <utility/bytewise.hpp>
 
 namespace avrsupport::serial::usart {
@@ -10,18 +11,18 @@ namespace avrsupport::serial::usart {
     struct Spi : interface::Spi<Spi> {
     private:
         enum struct ControlMask : uint8_t {
-            spi_irq_enable = 0b1000'0000,
-            spi_enable     = 0b0100'0000,
-            data_order     = 0b0010'0000,
-            role_select    = 0b0001'0000,
-            clock_polarity = 0b0000'1000,
-            clock_phase    = 0b0000'0100,
-            clock_base     = 0b0000'0011,
+            SPI_IRQ_ENABLE = 0b1000'0000,
+            SPI_ENABLE     = 0b0100'0000,
+            DATA_ORDER     = 0b0010'0000,
+            ROLE_SELECT    = 0b0001'0000,
+            CLOCK_POLARITY = 0b0000'1000,
+            CLOCK_PHASE    = 0b0000'0100,
+            CLOCK_BASE     = 0b0000'0011,
         };
         enum struct StatusMask : uint8_t {
-            spi_irq        = 0b1000'0000,
-            collision      = 0b0100'0000,
-            double_speed   = 0b0000'0001,
+            SPI_IRQ        = 0b1000'0000,
+            COLLISION      = 0b0100'0000,
+            DOUBLE_SPEED   = 0b0000'0001,
         };
 
         portlib::Register8
@@ -47,9 +48,9 @@ namespace avrsupport::serial::usart {
          */
         Spi & set_rate_divisor(uint8_t exponent) {
             exponent -= 1;
-            control &= ~static_cast<uint8_t>(ControlMask::clock_base);
+            control &= ~static_cast<uint8_t>(ControlMask::CLOCK_BASE);
             control |= exponent>>1;
-            status  &= ~static_cast<uint8_t>(StatusMask::double_speed);
+            status  &= ~static_cast<uint8_t>(StatusMask::DOUBLE_SPEED);
             status  |= ~exponent & 0b1;
             return *this;
         }

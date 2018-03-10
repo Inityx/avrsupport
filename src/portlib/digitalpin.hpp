@@ -16,8 +16,8 @@ namespace avrsupport::portlib {
         DigitalPin(
             DigitalPort &port,
             DigitalPort::PinIndex const index,
-            utility::IoDirection const direction = utility::IoDirection::in,
-            utility::LogicLevel const level = utility::LogicLevel::low
+            utility::IoDirection const direction = utility::IoDirection::IN,
+            utility::LogicLevel const level = utility::LogicLevel::LOW
         ) :
             port{port},
             bitmask{static_cast<uint8_t>(1<<index)}

@@ -34,7 +34,7 @@ bool compare(Correct correct, Tested tested) {
 }
 
 void array_const_big_endian() {
-    using each_byte = BytewiseConst<Bytes<5>, Endian::big>;
+    using each_byte = BytewiseConst<Bytes<5>, Endian::BIG>;
     Bytes<5> array{ 5, 4, 2, 3, 1 }, correct{array};
     std::vector<uint8_t> accum;
 
@@ -43,7 +43,7 @@ void array_const_big_endian() {
     assert(compare(correct, accum));
 }
 void array_const_little_endian() {
-    using each_byte = BytewiseConst<Bytes<5>, Endian::little>;
+    using each_byte = BytewiseConst<Bytes<5>, Endian::LITTLE>;
     Bytes<5> array{ 5, 4, 2, 3, 1 }, correct{ 1, 3, 2, 4, 5};
     std::vector<uint8_t> accum;
 
@@ -52,7 +52,7 @@ void array_const_little_endian() {
     assert(compare(correct, accum));
 }
 void array_mut_big_endian() {
-    using each_byte = Bytewise<BytesMut<5>, Endian::big>;
+    using each_byte = Bytewise<BytesMut<5>, Endian::BIG>;
     BytesMut<5> array{ 5, 4, 2, 3, 1 };
     Bytes<5>  correct{ 5, 9, 6, 5, 4 };
     uint8_t prev{0};
@@ -62,7 +62,7 @@ void array_mut_big_endian() {
     assert(compare(correct, array));
 }
 void array_mut_little_endian() {
-    using each_byte = Bytewise<BytesMut<5>, Endian::little>;
+    using each_byte = Bytewise<BytesMut<5>, Endian::LITTLE>;
     BytesMut<5> array{ 5, 4, 2, 3, 1 };
     Bytes<5>  correct{ 9, 6, 5, 4, 1 };
     uint8_t prev{0};
@@ -73,7 +73,7 @@ void array_mut_little_endian() {
 }
 
 void primitive_const_big_endian() {
-    using each_byte = BytewiseConst<uint32_t, Endian::big>;
+    using each_byte = BytewiseConst<uint32_t, Endian::BIG>;
     uint32_t source{0xAB'CD'EF'00};
     Bytes<4> correct{ 0x00, 0xEF, 0xCD, 0xAB };
     std::vector<uint8_t> accum;
@@ -83,7 +83,7 @@ void primitive_const_big_endian() {
     assert(compare(correct, accum));
 }
 void primitive_const_little_endian() {
-    using each_byte = BytewiseConst<uint32_t, Endian::little>;
+    using each_byte = BytewiseConst<uint32_t, Endian::LITTLE>;
     uint32_t source{0xAB'CD'EF'00};
     Bytes<4> correct{ 0xAB, 0xCD, 0xEF, 0x00 };
     std::vector<uint8_t> accum;
@@ -93,7 +93,7 @@ void primitive_const_little_endian() {
     assert(compare(correct, accum));
 }
 void primitive_mut_big_endian() {
-    using each_byte = Bytewise<uint32_t, Endian::big>;
+    using each_byte = Bytewise<uint32_t, Endian::BIG>;
     std::vector<uint8_t> source{ 0xAB, 0xCD, 0xEF, 0x00 };
     uint32_t correct{0xAB'CD'EF'00}, dest{0};
     
@@ -105,7 +105,7 @@ void primitive_mut_big_endian() {
     assert(dest == correct);
 }
 void primitive_mut_little_endian() {
-    using each_byte = Bytewise<uint32_t, Endian::little>;
+    using each_byte = Bytewise<uint32_t, Endian::LITTLE>;
     std::vector<uint8_t> source{ 0xAB, 0xCD, 0xEF, 0x00 };
     uint32_t correct{0x00'EF'CD'AB}, dest{0};
 

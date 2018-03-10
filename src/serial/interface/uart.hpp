@@ -7,8 +7,8 @@ namespace avrsupport::serial::interface {
     template<typename SelfClass>
     struct Uart {
         enum struct StopBits : uint8_t {
-            one = 1,
-            two = 2,
+            ONE = 1,
+            TWO = 2,
         };
 
         virtual SelfClass & set_stop_bits(StopBits const)       = 0;

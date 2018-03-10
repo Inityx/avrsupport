@@ -12,12 +12,12 @@ namespace avrsupport::serial::usi {
     struct Base {
     private:
         enum struct ControlMask : uint8_t {
-            start_cond_irq = 0b10'00'00'00, ///< Start condition interrupt enable
-            overflow_irq   = 0b01'00'00'00, ///< Counter overflow interrupt enable
-            wire_mode      = 0b00'11'00'00, ///< Wire mode select (usi::WireMode)
-            clock_source   = 0b00'00'11'00, ///< Clock source select (usi::ClockSource)
-            clock_strobe   = 0b00'00'00'10, ///< Clock strobe
-            toggle_clock   = 0b00'00'00'01, ///< Toggle clock port pin
+            START_COND_IRQ = 0b10'00'00'00, ///< Start condition interrupt enable
+            OVERFLOW_IRQ   = 0b01'00'00'00, ///< Counter overflow interrupt enable
+            WIRE_MODE      = 0b00'11'00'00, ///< Wire mode select (usi::WireMode)
+            CLOCK_SOURCE   = 0b00'00'11'00, ///< Clock source select (usi::ClockSource)
+            CLOCK_STROBE   = 0b00'00'00'10, ///< Clock strobe
+            TOGGLE_CLOCK   = 0b00'00'00'01, ///< Toggle clock port pin
         };
 
         static uint8_t const COUNTER_MASK{0b1111};
@@ -32,17 +32,17 @@ namespace avrsupport::serial::usi {
 
     protected:
         enum struct StatusMask : uint8_t {
-            start_cond_irq = 0b1000'0000,
-            overflow_irq   = 0b0100'0000,
-            stop_cond      = 0b0010'0000,
-            data_collision = 0b0001'0000,
+            START_COND_IRQ = 0b1000'0000,
+            OVERFLOW_IRQ   = 0b0100'0000,
+            STOP_COND      = 0b0010'0000,
+            DATA_COLLISION = 0b0001'0000,
         };
 
         enum struct WireMode : uint8_t {
-            none           = 0b00'00'00'00, ///< None
-            three_wire     = 0b00'01'00'00, ///< Three wire mode
-            two_wire       = 0b00'10'00'00, ///< Two wire mode
-            two_wire_low   = 0b00'11'00'00, ///< Two wire mode w/ SCL pin low on overflow
+            NONE           = 0b00'00'00'00, ///< None
+            THREE_WIRE     = 0b00'01'00'00, ///< Three wire mode
+            TWO_WIRE       = 0b00'10'00'00, ///< Two wire mode
+            TWO_WIRE_LOW   = 0b00'11'00'00, ///< Two wire mode w/ SCL pin low on overflow
         };
         uint8_t get_counter_value() const { return status & COUNTER_MASK; }
         
@@ -51,13 +51,13 @@ namespace avrsupport::serial::usi {
         }
 
         SelfClass & set_wire_mode(WireMode mode) {
-            control &= ~static_cast<uint8_t>(ControlMask::wire_mode);
+            control &= ~static_cast<uint8_t>(ControlMask::WIRE_MODE);
             control |=  static_cast<uint8_t>(mode);
             return *this_derived();
         }
 
         SelfClass & strobe_clock() {
-            control &= static_cast<uint8_t>(ControlMask::clock_strobe);
+            control &= static_cast<uint8_t>(ControlMask::CLOCK_STROBE);
             return *this_derived();
         }
 
@@ -75,14 +75,14 @@ namespace avrsupport::serial::usi {
 
     public:
         enum struct ClockSource : uint8_t {
-            none_software  = 0b00'00'00'00, ///< None or software strobe
-            compare_match  = 0b00'00'01'00, ///< Timer/Counter0 compare match
-            positive_edge  = 0b00'00'10'00, ///< Positive edge
-            negavive_edge  = 0b00'00'11'00, ///< Negative edge
+            NONE_SOFTWARE  = 0b00'00'00'00, ///< None or software strobe
+            COMPARE_MATCH  = 0b00'00'01'00, ///< Timer/Counter0 compare match
+            POSITIVE_EDGE  = 0b00'00'10'00, ///< Positive edge
+            NEGAVIVE_EDGE  = 0b00'00'11'00, ///< Negative edge
         };
 
         SelfClass & set_clock_source(ClockSource source) {
-            control &= ~static_cast<uint8_t>(ControlMask::clock_source);
+            control &= ~static_cast<uint8_t>(ControlMask::CLOCK_SOURCE);
             control |=  static_cast<uint8_t>(source);
             return *this_derived();
         }

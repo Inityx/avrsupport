@@ -20,10 +20,10 @@ namespace avrsupport::portlib {
     struct Eeprom {
     private:
         enum struct ControlMask : uint8_t {
-            read         = 0b000'001,
-            write        = 0b000'010,
-            master_write = 0b000'100,
-            interrupt    = 0b001'000
+            READ         = 0b000'001,
+            WRITE        = 0b000'010,
+            MASTER_WRITE = 0b000'100,
+            INTERRUPT    = 0b001'000
         };
 
         Register8 data, control;
@@ -43,12 +43,12 @@ namespace avrsupport::portlib {
         {}
 
         bool is_writing() {
-            return control & static_cast<uint8_t>(ControlMask::write);
+            return control & static_cast<uint8_t>(ControlMask::WRITE);
         }
 
         uint8_t read_byte(utility::avr_size_t const location) {
             address = location;
-            control |= static_cast<uint8_t>(ControlMask::read);
+            control |= static_cast<uint8_t>(ControlMask::READ);
             return data;
         }
 
@@ -59,11 +59,11 @@ namespace avrsupport::portlib {
             // This caching is necessary because the second control write
             // must be within 4 CPU instructions of the first, and avr-gcc can't
             // currently substitute static literal references at compile time
-            uint8_t cfg_and_write = (control & CONFIG_MASK) | static_cast<uint8_t>(ControlMask::write);
+            uint8_t cfg_and_write = (control & CONFIG_MASK) | static_cast<uint8_t>(ControlMask::WRITE);
             volatile uint8_t * control_cached{&control};
 
             InterruptGuard guard;
-            *control_cached = static_cast<uint8_t>(ControlMask::master_write);
+            *control_cached = static_cast<uint8_t>(ControlMask::MASTER_WRITE);
             *control_cached = cfg_and_write;
         }
     };
@@ -93,7 +93,7 @@ namespace avrsupport::portlib {
          */
         template<typename ReadType>
         void sync_read(utility::avr_size_t location, ReadType & dest) {
-            using EachByte = utility::Bytewise<ReadType, utility::Endian::big>;
+            using EachByte = utility::Bytewise<ReadType, utility::Endian::BIG>;
 
             while (Eeprom::is_writing());
 
@@ -106,7 +106,7 @@ namespace avrsupport::portlib {
         /// Write struct or primitive synchronously.
         template<typename WriteType>
         void sync_write(utility::avr_size_t location, WriteType const & source) {
-            using EachByteConst = utility::BytewiseConst<WriteType const, utility::Endian::big>;
+            using EachByteConst = utility::BytewiseConst<WriteType const, utility::Endian::BIG>;
 
             for (uint8_t const & byte : EachByteConst{source}) {
                 while (Eeprom::is_writing());

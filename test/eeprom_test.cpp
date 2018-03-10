@@ -30,10 +30,10 @@ void assert_enum(Enum e, uint8_t v) {
 }
 
 void control_mask_test() {
-    assert_enum(Eeprom::ControlMask::read, 0b1);
-    assert_enum(Eeprom::ControlMask::write, 0b10);
-    assert_enum(Eeprom::ControlMask::master_write, 0b100);
-    assert_enum(Eeprom::ControlMask::interrupt, 0b1000);
+    assert_enum(Eeprom::ControlMask::READ,         0b0001);
+    assert_enum(Eeprom::ControlMask::WRITE,        0b0010);
+    assert_enum(Eeprom::ControlMask::MASTER_WRITE, 0b0100);
+    assert_enum(Eeprom::ControlMask::INTERRUPT,    0b1000);
 }
 
 void buffer_eeprom_test() {

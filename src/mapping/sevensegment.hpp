@@ -58,11 +58,11 @@ namespace avrsupport::mapping {
         };
         enum struct Special : Encoding {
             //         . abcdefg
-            space  = 0b0'0000000,
-            dot    = 0b1'0000000,
-            dash   = 0b0'0000001,
-            uscore = 0b0'0001000,
-            error  = 0b0'1001000
+            SPACE  = 0b0'0000000,
+            DOT    = 0b1'0000000,
+            DASH   = 0b0'0000001,
+            USCORE = 0b0'0001000,
+            ERROR  = 0b0'1001000
         };
         
     public:
@@ -72,7 +72,7 @@ namespace avrsupport::mapping {
         ) {
             if (!decimal_point) return CHARS[n];
             
-            return CHARS[n] | static_cast<uint8_t>(Special::dot);
+            return CHARS[n] | static_cast<uint8_t>(Special::DOT);
         }
 
         constexpr static Encoding ascii(char const c) {
@@ -83,13 +83,13 @@ namespace avrsupport::mapping {
             if (within(c, {'A', 'Z'})) return CHARS[c - 'A' + ALPHA_OFFSET];
 
             switch (c) {
-                case ' ': return static_cast<Encoding>(Special::space);
-                case '.': return static_cast<Encoding>(Special::dot);
-                case '-': return static_cast<Encoding>(Special::dash);
-                case '_': return static_cast<Encoding>(Special::uscore);
+                case ' ': return static_cast<Encoding>(Special::SPACE);
+                case '.': return static_cast<Encoding>(Special::DOT);
+                case '-': return static_cast<Encoding>(Special::DASH);
+                case '_': return static_cast<Encoding>(Special::USCORE);
             };
 
-            return static_cast<Encoding>(Special::error);
+            return static_cast<Encoding>(Special::ERROR);
         }
     };
     
