@@ -23,9 +23,9 @@ namespace avrsupport::mapping {
      * @see SevenSegmentMap
      */
     template<typename Map>
-    struct EncodedWith : utility::CStringChars<char const, StringMapper<Map>> {
+    struct EncodedWith : utility::cstring::Chars<char const, StringMapper<Map>> {
         constexpr EncodedWith(char const * const string) :
-            utility::CStringChars<char const, StringMapper<Map>>{string} {}
+            utility::cstring::Chars<char const, StringMapper<Map>>{string} {}
 
         /// `constexpr` string encoding.
         template<utility::avr_size_t COUNT>

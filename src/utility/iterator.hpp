@@ -2,12 +2,10 @@
 #define AVRSUPPORT_UTILITY_ITERATOR_H
 
 #include <utility/arithmetic.hpp>
-#include <utility/cstring.hpp>
 #include <utility/stddef.hpp>
 
 namespace avrsupport::utility {
-    // TODO: Unit test
-
+    /// Iterator types
     namespace iterator {
         /** A base iterator.
          * @tparam StateType The type of state to hold
@@ -86,24 +84,7 @@ namespace avrsupport::utility {
             constexpr SelfClass   operator+ (Type const rhs) const { return SelfClass{ this->state + (rhs * STEP) }; }
             constexpr SelfClass   operator- (Type const rhs) const { return SelfClass{ this->state - (rhs * STEP) }; }
         };
-
-        /// An iterator over C-strings.
-        template<typename CharType>
-        struct CStringIter : public PointerIter<CharType, CStringIter<CharType>> {
-            constexpr CStringIter(CharType * const string) :
-                PointerIter<CharType, CStringIter<CharType>>{string} {}
-        };
     }
-
-    // A wrapper for iterable C strings.
-    template<typename CharType = char, typename Iter = iterator::CStringIter<CharType>>
-    struct CStringChars {
-        CharType * const string;
-
-        constexpr CStringChars(CharType * const string) : string{string} {}
-        constexpr Iter begin() const { return Iter{string}; }
-        constexpr Iter end()   const { return Iter{cstring::end(string)}; }
-    };
 
     /** An iterable numeric range, `[first, last)`.
      * When `abs(step)` is not 1, `last` is an outer bound.

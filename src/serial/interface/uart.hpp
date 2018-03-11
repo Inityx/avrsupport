@@ -1,7 +1,7 @@
 #ifndef AVRSUPPORT_SERIAL_INTERFACE_UART_H
 #define AVRSUPPORT_SERIAL_INTERFACE_UART_H
 
-#include <utility/iterator.hpp>
+#include <utility/cstring.hpp>
 
 namespace avrsupport::serial::interface {
     template<typename SelfClass>
@@ -22,7 +22,7 @@ namespace avrsupport::serial::interface {
         }
 
         SelfClass & sync_write_string(char const * string) {
-            for (auto c : utility::CStringChars<char const>{string})
+            for (auto c : utility::cstring::Chars<char const>{string})
                 sync_write_byte(c);
         }
     };
