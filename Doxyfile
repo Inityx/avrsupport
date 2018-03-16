@@ -18,7 +18,7 @@ PROJECT_NAME           = "AVRSupport"
 PROJECT_BRIEF          = "A C++17 support library for AVR Microcontrollers"
 PROJECT_NUMBER         = "0.0.1"
 PROJECT_LOGO           = # max 200x50px
-USE_MDFILE_AS_MAINPAGE = README.md
+USE_MDFILE_AS_MAINPAGE = ./README.md
 
 OUTPUT_DIRECTORY       = ./docs/build
 
@@ -92,7 +92,7 @@ WARN_LOGFILE           =
 # Configuration options related to the input files
 #---------------------------------------------------------------------------
 
-INPUT                  = ./src
+INPUT                  = README.md ./src
 RECURSIVE              = YES
 STRIP_FROM_PATH        = src
 STRIP_FROM_INC_PATH    = src
