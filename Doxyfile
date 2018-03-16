@@ -148,9 +148,9 @@ IGNORE_PREFIX          =
 #---------------------------------------------------------------------------
 
 GENERATE_HTML          = YES
-HTML_HEADER            = docs/src/header.html
-HTML_FOOTER            = docs/src/footer.html
-HTML_STYLESHEET        = docs/src/style.css
+# HTML_HEADER            = docs/src/header.html
+# HTML_FOOTER            = docs/src/footer.html
+# HTML_STYLESHEET        = docs/src/style.css
 HTML_EXTRA_STYLESHEET  =
 HTML_EXTRA_FILES       =
 
@@ -172,7 +172,7 @@ HTML_INDEX_NUM_ENTRIES = 0   # All trees fully expanded initially
 # The default value is: NO.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-DISABLE_INDEX          = YES
+DISABLE_INDEX          = NO
 
 ENUM_VALUES_PER_LINE   = 4
 
